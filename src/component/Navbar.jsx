@@ -17,6 +17,7 @@ import {
 } from "@nextui-org/react";
 import LogoBlack from "../assets/Logo Black.png";
 import LogoWhite from "../assets/Logo White.png";
+import SwicthTheme from "./SwicthTheme";
 
 function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -27,9 +28,7 @@ function Navbar() {
   const menuItems = [
     "Home",
     "Orphanage",
-    "About",
-    "Sign In",
-    "Log Out",
+    "About"
   ];
 
   useEffect(() => {
@@ -89,19 +88,7 @@ function Navbar() {
             <Link href="#">Login</Link>
           </NavbarItem>
           <NavbarItem>
-            <Switch
-              checked={theme === "dark"}
-              onChange={e => setTheme(e.target.checked ? "dark" : "light")}
-              size="lg"
-              color="primary"
-              thumbIcon={({ isSelected, className }) =>
-                isSelected ? (
-                  <MoonIcon className={className} />
-                ) : (
-                  <SunIcon className={className} />
-                )
-              }
-            />
+            <SwicthTheme />
             {isLoggedIn ? (
               <Button as={Link} color="primary" href="#" variant="flat">
                 Logout
@@ -115,7 +102,6 @@ function Navbar() {
         </NavbarContent>
         <NavbarMenu>
           {menuItems
-            .filter(item => !(isLoggedIn && item === "Sign In") && !(!isLoggedIn && item === "Log Out"))
             .map((item, index) => (
               <NavbarMenuItem key={`${item}-${index}`}>
                 <Link
