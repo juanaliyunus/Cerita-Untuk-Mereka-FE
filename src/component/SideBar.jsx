@@ -14,6 +14,7 @@ const SideBar=()=>{
                         <Sidebar.Item href="#" icon={BsPerson}>
                             Team
                         </Sidebar.Item>
+                        
                     </Sidebar.ItemGroup>
                 </Sidebar.Items>
             </Sidebar>
