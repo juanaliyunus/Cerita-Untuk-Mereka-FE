@@ -1,20 +1,16 @@
-import React from "react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { SunIcon } from "../assets/SunIcon";
-import { MoonIcon } from "../assets/MoonIcon";
 import {
-  Navbar as NextNavbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  Link,
-  Button,
-  Switch,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle,
+    Button,
+    Link,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    NavbarMenu,
+    NavbarMenuItem,
+    NavbarMenuToggle,
+    Navbar as NextNavbar
 } from "@nextui-org/react";
+import { useTheme } from "next-themes";
+import React, { useEffect, useState } from "react";
 import LogoBlack from "../assets/Logo Black.png";
 import LogoWhite from "../assets/Logo White.png";
 import SwicthTheme from "./SwicthTheme";
