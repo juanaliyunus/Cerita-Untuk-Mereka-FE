@@ -17,7 +17,22 @@ import axiosInstance from "../../lib/axiosInstance";
 import { toast } from "react-toastify"; // Import toast
 
 const signupFormSchema = z.object({
-  username: z.string().min(3).max(20), // Hapus validasi tambahan
+  username: z
+    .string()
+    .min(3)
+    .max(20)
+    .refine(val => !/\s/.test(val), {
+      message: "Username must not contain spaces",
+    })
+    .refine(val => !/^[0-9]/.test(val), {
+      message: "Username must not start with a number",
+    })
+    .refine(val => !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val), {
+      message: "Username must not contain special characters",
+    })
+    .refine(val => !/[^\w\s]/.test(val), {
+      message: "Username must not contain special characters",
+    }),
   fullname: z.string().min(3).max(20),
   password: z
     .string()
@@ -42,6 +57,7 @@ const signupFormSchema = z.object({
 });
 
 const DonaturSignUp = () => {
+  const navigate = useNavigate();
   const signupForm = useForm({
     defaultValues: {
       username: "",

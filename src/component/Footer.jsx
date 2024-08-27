@@ -3,7 +3,7 @@ import { Link } from '@nextui-org/react';
 
 function Footer() {
   return (
-    <footer className="bg-gray-800 text-white py-4 fixed bottom-0 w-full">
+    <footer className="bg-gray-800 text-white py-4 w-full mt-24">
       <div className="container mx-auto text-center">
         <p>&copy; 2024 Kelompok 1. Semua hak dilindungi.</p>
         <ul className="flex justify-center space-x-4 mt-2">

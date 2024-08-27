@@ -54,7 +54,7 @@ const AuthPage = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/login', formData);
+      const response = await axiosInstance.post('/users', formData);
       const token = response.data.token;
       const user = jwt_decode(token);
 

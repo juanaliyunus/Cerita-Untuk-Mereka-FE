@@ -4,6 +4,8 @@ import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/auth /AuthPage";
 import DonaturSignUp from "./pages/auth /DonaturSignUp";
 import OrphanageSignUp from "./pages/auth /OrphanagaseSignUp";
+import HomePageOrphanage from "./pages/orphanage/HomePage";
+import HomePageDonatur from "./pages/donor/HomePage";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/donatur-signup" element={<DonaturSignUp />} />
         <Route path="/orphanage-signup" element={<OrphanageSignUp />} />
+        <Route path="/orphanage-dashboard" element={<HomePageOrphanage />} />
+        <Route path="/donatur-dashboard" element={<HomePageDonatur />} />
       </Routes>
     </>
   );

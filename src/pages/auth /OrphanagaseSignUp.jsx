@@ -10,10 +10,11 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Controller, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import axiosInstance from "../../lib/axiosInstance";
+import { toast } from "react-toastify";
 
 const orphanageFormSchema = z.object({
   username: z
@@ -56,6 +57,7 @@ const orphanageFormSchema = z.object({
 });
 
 const OrphanageSignUp = () => {
+  const navigate = useNavigate();
   const orphanageForm = useForm({
     defaultValues: {
       username: "",
@@ -68,6 +70,31 @@ const OrphanageSignUp = () => {
     },
     resolver: zodResolver(orphanageFormSchema),
   });
+
+  const { setError, clearErrors } = orphanageForm;
+  const password = useWatch({ control: orphanageForm.control, name: "password" });
+
+  React.useEffect(() => {
+    const passwordErrors = [];
+    if (password && !/[A-Z]/.test(password)) {
+      passwordErrors.push("Password must contain at least 1 uppercase letter");
+    }
+    if (password && !/[a-z]/.test(password)) {
+      passwordErrors.push("Password must contain at least 1 lowercase letter");
+    }
+    if (password && !/\d/.test(password)) {
+      passwordErrors.push("Password must contain at least 1 number");
+    }
+    if (password && !/[@$!%*?&]/.test(password)) {
+      passwordErrors.push("Password must contain at least 1 special character such as @$!%*?&");
+    }
+
+    if (passwordErrors.length > 0) {
+      setError("password", { type: "manual", message: passwordErrors.join(", ") });
+    } else {
+      clearErrors("password");
+    }
+  }, [password, setError, clearErrors]);
 
   const registerOrphanage = async data => {
     // Memeriksa apakah nama panti sudah ada
@@ -114,10 +141,10 @@ const OrphanageSignUp = () => {
       }
 
       await registerOrphanage(data);
-      alert("Orphanage registered successfully");
-      window.location.href = "/login";
+      toast.success("Orphanage registered successfully");
+      navigate("/login");
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -275,7 +302,7 @@ const OrphanageSignUp = () => {
                   </>
                 )}
               />
-              <Button type="submit" color="primary" onClick={onSubmit}>
+              <Button type="submit" color="primary">
                 Sign Up
               </Button>
               <p className="text-center mt-2">
