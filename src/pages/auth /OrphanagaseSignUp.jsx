@@ -1,55 +1,130 @@
-import React, { useState } from "react";
-import axiosInstance from "../../lib/axiosInstance";
-import { Button, Card, CardBody, CardHeader, Divider, Input, Textarea } from "@nextui-org/react";
-import { Link, useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+  Textarea,
+} from "@nextui-org/react";
+import React from "react";
 import { Helmet } from "react-helmet";
-import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";  
+import { Link } from "react-router-dom";
+import { z } from "zod";
+import axiosInstance from "../../lib/axiosInstance";
 
-
-const signupFormSchema = z.object({
-  username: z.string().min(3).max(20),
+const orphanageFormSchema = z.object({
+  username: z
+    .string()
+    .min(3)
+    .max(20)
+    .refine(val => !/\s/.test(val), {
+      message: "Username must not contain spaces",
+    })
+    .refine(val => !/^[0-9]/.test(val), {
+      message: "Username must not start with a number",
+    })
+    .refine(val => !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val), {
+      message: "Username must not contain special characters",
+    })
+    .refine(val => !/[^\w\s]/.test(val), {
+      message: "Username must not contain special characters",
+    }),
   password: z
     .string()
-    .min(6)
+    .min(8)
     .max(20)
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
-    ),  
-  email: z.string().email(),
-  phone: z.string().min(10).max(13),
+    .refine(val => /[A-Z]/.test(val), {
+      message: "Password must contain at least 1 uppercase letter",
+    })
+    .refine(val => /[a-z]/.test(val), {
+      message: "Password must contain at least 1 lowercase letter",
+    })
+    .refine(val => /\d/.test(val), {
+      message: "Password must contain at least 1 number",
+    })
+    .refine(val => /[@$!%*?&]/.test(val), {
+      message: "Password must contain at least 1 special character",
+    }),
+  name: z.string().min(3).max(50),
   address: z.string().max(100),
-  website: z.string().max(100),
-  description: z.string().max(100),
-  status: z.string().max(100),
+  phone: z.string().min(10).max(13),
+  email: z.string().email(),
+  description: z.string().max(200),
 });
 
-const OrphanagaseSignUp = () => {
-
-  const signupForm = useForm({
+const OrphanageSignUp = () => {
+  const orphanageForm = useForm({
     defaultValues: {
       username: "",
       password: "",
-      email: "",
-      phone: "",
+      name: "",
       address: "",
-      website: "",
+      phone: "",
+      email: "",
       description: "",
-      status: "",
     },
-    resolver: zodResolver(signupFormSchema),
+    resolver: zodResolver(orphanageFormSchema),
   });
 
   const registerOrphanage = async data => {
-    const response = await axiosInstance.post("/users", data);
-    return response.data;
+    // Memeriksa apakah nama panti sudah ada
+    const existingOrphanageResponse = await axiosInstance.get(
+      `/orphanages?name=${data.name}`
+    );
+    if (existingOrphanageResponse.data.length > 0) {
+      throw new Error("Orphanage name already exists");
+    }
+
+    const userData = {
+      username: data.username,
+      password: data.password,
+      role: "orphanagase", // Menambahkan role orphanagase
+    };
+    const orphanageData = {
+      name: data.name,
+      address: data.address,
+      phone: data.phone,
+      email: data.email,
+      description: data.description,
+    };
+
+    // Menyimpan data ke tabel users
+    const userResponse = await axiosInstance.post("/users", userData);
+
+    // Menyimpan data ke tabel orphanages
+    const orphanageResponse = await axiosInstance.post(
+      "/orphanages",
+      orphanageData
+    );
+
+    return orphanageResponse.data;
+  };
+
+  const onSubmit = async data => {
+    try {
+      // Memeriksa apakah username sudah ada
+      const existingUserResponse = await axiosInstance.get(
+        `/users?username=${data.username}`
+      );
+      if (existingUserResponse.data.length > 0) {
+        throw new Error("Username already exists");
+      }
+
+      await registerOrphanage(data);
+      alert("Orphanage registered successfully");
+      window.location.href = "/login";
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
-    <>
+    <div>
       <Helmet>
-        <title>Orphanagase Sign Up</title>
+        <title>Orphanage Sign Up</title>
       </Helmet>
       <Link to="/" className="w-10 h-10">
         <img
@@ -61,146 +136,160 @@ const OrphanagaseSignUp = () => {
         />
       </Link>
       <div>
-      <Card className="w-full max-w-md mx-auto mt-10">
-        <CardHeader>
-          <h1 className="text-2xl font-semibold mb-2 text-center">
-            Orphanagase Sign Up
-          </h1>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-            <form className="flex flex-col justify-center" onSubmit={signupForm.handleSubmit(registerOrphanage)}>
-            <Controller 
+        <Card className="w-full max-w-md mx-auto mt-10">
+          <CardHeader>
+            <h1 className="text-2xl font-semibold mb-2 text-center">
+              Orphanage Sign Up
+            </h1>
+          </CardHeader>
+          <Divider />
+          <CardBody>
+            <form
+              className="flex flex-col justify-center"
+              onSubmit={orphanageForm.handleSubmit(onSubmit)}
+            >
+              <Controller
                 name="username"
-                control={signupForm.control}
-                render={({field}) => (
+                control={orphanageForm.control}
+                render={({ field, fieldState: { error } }) => (
+                  <>
                     <Input
-                        label="Username"
-                        className="mb-4"
-                        bordered color="primary"    
-                        isInvalid={Boolean(signupForm.formState.errors.username)}
-                        errorMessage={signupForm.formState.errors.username?.message}
-                        {...field}
-                        style={{ border: 'none', outline: 'none' }}
+                      {...field}
+                      label="Username"
+                      className="mb-4"
+                      style={{ border: "none", outline: "none" }}
                     />
+                    {error && (
+                      <span className="text-red-500">{error.message}</span>
+                    )}
+                  </>
                 )}
-                defaultValue=""
-            />
-            <Controller
+              />
+              <Controller
                 name="password"
-                control={signupForm.control}
-                render={({field}) => (
+                control={orphanageForm.control}
+                render={({ field, fieldState: { error } }) => (
+                  <>
                     <Input
-                        label="Password"
-                        className="mb-4"
-                        type="password"
-                        bordered color="primary"
-                        isInvalid={Boolean(signupForm.formState.errors.password)}
-                        errorMessage={signupForm.formState.errors.password?.message}
-                        style={{ border: 'none', outline: 'none' }} 
-                        {...field}
+                      {...field}
+                      label="Password"
+                      className="mb-4"
+                      type="password"
+                      style={{ border: "none", outline: "none" }}
                     />
+                    {error && (
+                      <span className="text-red-500">{error.message}</span>
+                    )}
+                  </>
                 )}
-                defaultValue=""
-            />
-            <Controller
-                name="email"
-                control={signupForm.control}
-                render={({field}) => (
+              />
+              <Controller
+                name="name"
+                control={orphanageForm.control}
+                render={({ field, fieldState: { error } }) => (
+                  <>
                     <Input
-                        label="Email"
-                        className="mb-4"
-                        bordered color="primary"
-                        isInvalid={Boolean(signupForm.formState.errors.email)}
-                        errorMessage={signupForm.formState.errors.email?.message}
-                        {...field}
-                        type="email"
-                        style={{ border: 'none', outline: 'none' }}
+                      {...field}
+                      label="Orphanage Name"
+                      className="mb-4"
+                      style={{ border: "none", outline: "none" }}
                     />
+                    {error && (
+                      <span className="text-red-500">{error.message}</span>
+                    )}
+                  </>
                 )}
-                defaultValue=""
-            />
-            <Controller
-                name="phone"
-                control={signupForm.control}
-                render={({field}) => (
-                    <Input
-                        label="Phone"
-                        className="mb-4"
-                        {...field}
-                        bordered color="primary"
-                        isInvalid={Boolean(signupForm.formState.errors.phone)}
-                        errorMessage={signupForm.formState.errors.phone?.message}
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        style={{ border: 'none', outline: 'none' }}
-                        onInput={(e) => {
-                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                        }}
-                    />
-                )}
-                defaultValue=""
-            />  
-            <Controller
+              />
+              <Controller
                 name="address"
-                control={signupForm.control}
-                render={({field}) => (
+                control={orphanageForm.control}
+                render={({ field, fieldState: { error } }) => (
+                  <>
                     <Textarea
-                        label="Address"                       
-                        className="mb-4"
-                        {...field}
-                        bordered color="primary"
-                        isInvalid={Boolean(signupForm.formState.errors.address)}
-                        errorMessage={signupForm.formState.errors.address?.message}
-                        type="textarea"
-                        style={{ border: 'none', outline: 'none' }}
+                      {...field}
+                      label="Address"
+                      className="mb-4"
+                      style={{ border: "none", outline: "none" }}
                     />
+                    {error && (
+                      <span className="text-red-500">{error.message}</span>
+                    )}
+                  </>
                 )}
-                defaultValue=""
-            />  
-            <Controller
-                name="website"
-                control={signupForm.control}
-                render={({field}) => (
+              />
+              <Controller
+                name="phone"
+                control={orphanageForm.control}
+                render={({ field, fieldState: { error } }) => (
+                  <>
                     <Input
-                        label="Website"
-                        className="mb-4"
-                        {...field}
-                        bordered color="primary"
-                        isInvalid={Boolean(signupForm.formState.errors.website)}
-                        errorMessage={signupForm.formState.errors.website?.message}
-                        type="url"
-                        style={{ border: 'none', outline: 'none' }}
+                      {...field}
+                      label="Phone"
+                      className="mb-4"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      style={{ border: "none", outline: "none" }}
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                      }} // Menghapus karakter non-angka saat diinput
                     />
+                    {error && (
+                      <span className="text-red-500">{error.message}</span>
+                    )}
+                  </>
                 )}
-                defaultValue=""
-            />
-            <Controller
+              />
+              <Controller
+                name="email"
+                control={orphanageForm.control}
+                render={({ field, fieldState: { error } }) => (
+                  <>
+                    <Input
+                      {...field}
+                      label="Email"
+                      className="mb-4"
+                      type="email"
+                      style={{ border: "none", outline: "none" }}
+                    />
+                    {error && (
+                      <span className="text-red-500">{error.message}</span>
+                    )}
+                  </>
+                )}
+              />
+              <Controller
                 name="description"
-                control={signupForm.control}
-                render={({field}) => (
+                control={orphanageForm.control}
+                render={({ field, fieldState: { error } }) => (
+                  <>
                     <Textarea
-                        label="Description"
-                        className="mb-4"
-                        {...field}
-                        bordered color="primary"
-                        isInvalid={Boolean(signupForm.formState.errors.description)}
-                        errorMessage={signupForm.formState.errors.description?.message}
-                        type="textarea"
-                        style={{ border: 'none', outline: 'none'}}
+                      {...field}
+                      label="Description"
+                      className="mb-4"
+                      style={{ border: "none", outline: "none" }}
                     />
+                    {error && (
+                      <span className="text-red-500">{error.message}</span>
+                    )}
+                  </>
                 )}
-                defaultValue=""
-            />
-            <Button type="submit" className="bg-blue-500 text-white">Sign Up</Button>
-            <p className="text-center mt-4">Already have an account? <Link to="/login" className="text-blue-500">Login</Link></p>
+              />
+              <Button type="submit" color="primary" onClick={onSubmit}>
+                Sign Up
+              </Button>
+              <p className="text-center mt-2">
+                Already have an account?{" "}
+                <Link to="/login" className="text-blue-500">
+                  Login
+                </Link>
+              </p>
             </form>
-        </CardBody>
-      </Card>
+          </CardBody>
+        </Card>
       </div>
-    </>
+    </div>
   );
 };
 
-export default OrphanagaseSignUp;
+export default OrphanageSignUp;

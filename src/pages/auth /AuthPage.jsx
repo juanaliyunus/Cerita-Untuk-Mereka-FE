@@ -5,6 +5,7 @@ import { z } from "zod";
 import axiosInstance from '../../lib/axiosInstance';
 import { Card, CardBody, CardFooter, CardHeader, Checkbox, Input } from "@nextui-org/react";
 import { Button, ButtonGroup } from "flowbite-react";
+import * as jwt_decode from "jwt-decode";
 
 const AuthPage = () => {
   const [showRegister, setShowRegister] = useState(false);
@@ -21,6 +22,18 @@ const AuthPage = () => {
 
     return () => darkModeMediaQuery.removeEventListener("change", handleChange);
   }, []);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+    if (token) {
+      const user = jwt_decode(token);
+      if (user.role === 'donatur') {
+        navigate("/donatur-dashboard");
+      } else if (user.role === 'orphanage') {
+        navigate("/orphanage-dashboard");
+      }
+    }
+  }, [navigate]);
 
   const loginSchema = z.object({
     username: z.string().min(3).max(20),
@@ -41,29 +54,27 @@ const AuthPage = () => {
     }
 
     try {
-      const response = await axiosInstance.get('/users', formData);
-      console.log('Login successful:', response.data);
-      // Handle successful login (e.g., redirect, store token, etc.)
-      navigate("/");
+      const response = await axiosInstance.post('/login', formData);
+      const token = response.data.token;
+      const user = jwt_decode(token);
+
+      if (rememberMe) {
+        Cookies.set('token', token, { expires: 7 });
+      } else {
+        localStorage.setItem('token', token);
+      }
+
+      // Simpan role dan id ke localStorage
+      localStorage.setItem('role', user.role);
+      localStorage.setItem('id', user.id);
+
+      if (user.role === 'donatur') {
+        navigate("/donatur-dashboard");
+      } else if (user.role === 'orphanage') {
+        navigate("/orphanage-dashboard");
+      }
     } catch (error) {
       console.error('Login error:', error);
-      // Handle login error
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    const username = e.target['new-username'].value;
-    const password = e.target['new-password'].value;
-    const email = e.target.email.value;
-
-    try {
-      const response = await axiosInstance.post('/users', { username, password, email });
-      console.log('Registration successful:', response.data);
-      // Handle successful registration (e.g., redirect, show message, etc.)
-    } catch (error) {
-      console.error('Registration error:', error);
-      // Handle registration error
     }
   };
 
@@ -85,19 +96,23 @@ const AuthPage = () => {
                       <h1 className="text-2xl font-semibold mb-2 text-center">Login</h1>
                     </CardHeader>
                     <CardBody>
-                      <Input 
-                        label="Username"
-                        className="mb-4"
-                        style={{ border: 'none', outline: 'none' }}
-                      />
-                      <Input 
-                        label="Password"
-                        className="mb-4"
-                        type="password"
-                        style={{ border: 'none', outline: 'none' }}
-                      />
-                      <Checkbox>Remember me</Checkbox>
-                      <Button onClick={handleLogin} color="blue" className="mt-2">Login</Button>
+                      <form onSubmit={handleLogin}>
+                        <Input 
+                          label="Username"
+                          name="username" 
+                          className="mb-4"
+                          style={{ border: 'none', outline: 'none' }}
+                        />
+                        <Input 
+                          label="Password"
+                          name="password"
+                          className="mb-4"
+                          type="password"
+                          style={{ border: 'none', outline: 'none' }}
+                        />
+                        <Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}>Remember me</Checkbox>
+                        <Button type="submit" color="blue" className="mt-2 w-full">Login</Button>
+                      </form>
                     </CardBody>
                     <CardFooter>
                       <p className="text-center">Don't have an account? <Link onClick={() => setShowRegister(true)} className="text-blue-500">Register</Link></p>
