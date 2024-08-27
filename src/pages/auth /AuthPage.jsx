@@ -1,109 +1,123 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import axiosInstance from '../../lib/axiosInstance';
+import { Card, CardBody, CardFooter, CardHeader, Checkbox, Input } from "@nextui-org/react";
+import { Button, ButtonGroup } from "flowbite-react";
 
 const AuthPage = () => {
   const [showRegister, setShowRegister] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    setIsDarkMode(darkModeMediaQuery.matches);
+
+    const handleChange = (e) => setIsDarkMode(e.matches);
+    darkModeMediaQuery.addEventListener("change", handleChange);
+
+    return () => darkModeMediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  const loginSchema = z.object({
+    username: z.string().min(3).max(20),
+    password: z.string().min(8),
+  });
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const formData = {
+      username: e.target.username.value,
+      password: e.target.password.value,
+    };
+
+    const result = loginSchema.safeParse(formData);
+    if (!result.success) {
+      console.error('Validation error:', result.error.errors);
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.get('/users', formData);
+      console.log('Login successful:', response.data);
+      // Handle successful login (e.g., redirect, store token, etc.)
+      navigate("/");
+    } catch (error) {
+      console.error('Login error:', error);
+      // Handle login error
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const username = e.target['new-username'].value;
+    const password = e.target['new-password'].value;
+    const email = e.target.email.value;
+
+    try {
+      const response = await axiosInstance.post('/users', { username, password, email });
+      console.log('Registration successful:', response.data);
+      // Handle successful registration (e.g., redirect, show message, etc.)
+    } catch (error) {
+      console.error('Registration error:', error);
+      // Handle registration error
+    }
+  };
 
   return (
     <>
+      <Helmet>
+        <title>Auth Page</title>
+      </Helmet>
+      <Link to="/" className="w-10 h-10">
+        <img src={"https://img.icons8.com/?size=100&id=Knx9yksqRI1K&format=png&color=000000"} alt="back" className="w-10 h-10" />
+      </Link>
       <div className="flex justify-center items-center h-screen">
         <div className="flex flex-col justify-start items-center">
-          <h1 className="text-3xl font-bold mb-4">Auth Page</h1>
           <div className="space-y-8">
             {!showRegister ? (
               <div>
-                <h2 className="text-2xl font-semibold mb-2">Login</h2>
-                <form className="space-y-4">
-                  <div className="flex flex-col">
-                    <label htmlFor="username" className="mb-1">
-                      Username:
-                    </label>
-                    <input
-                      type="text"
-                      id="username"
-                      name="username"
-                      required
-                      className="border rounded px-2 py-1"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="password" className="mb-1">
-                      Password:
-                    </label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      required
-                      className="border rounded px-2 py-1"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                  >
-                    Login
-                  </button>
-                </form>
-                <button
-                  onClick={() => setShowRegister(true)}
-                  className="mt-4 text-blue-500"
-                >
-                  Register
-                </button>
+                  <Card>
+                    <CardHeader>
+                      <h1 className="text-2xl font-semibold mb-2 text-center">Login</h1>
+                    </CardHeader>
+                    <CardBody>
+                      <Input 
+                        label="Username"
+                        className="mb-4"
+                        style={{ border: 'none', outline: 'none' }}
+                      />
+                      <Input 
+                        label="Password"
+                        className="mb-4"
+                        type="password"
+                        style={{ border: 'none', outline: 'none' }}
+                      />
+                      <Checkbox>Remember me</Checkbox>
+                      <Button onClick={handleLogin} color="blue" className="mt-2">Login</Button>
+                    </CardBody>
+                    <CardFooter>
+                      <p className="text-center">Don't have an account? <Link onClick={() => setShowRegister(true)} className="text-blue-500">Register</Link></p>
+                    </CardFooter>
+                  </Card>
               </div>
             ) : (
               <div>
-                <h2 className="text-2xl font-semibold mb-2">Register</h2>
-                <form className="space-y-4">
-                  <div className="flex flex-col">
-                    <label htmlFor="new-username" className="mb-1">
-                      Username:
-                    </label>
-                    <input
-                      type="text"
-                      id="new-username"
-                      name="new-username"
-                      required
-                      className="border rounded px-2 py-1"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="new-password" className="mb-1">
-                      Password:
-                    </label>
-                    <input
-                      type="password"
-                      id="new-password"
-                      name="new-password"
-                      required
-                      className="border rounded px-2 py-1"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="email" className="mb-1">
-                      Email:
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      className="border rounded px-2 py-1"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-green-500 text-white px-4 py-2 rounded"
-                  >
-                    Register
-                  </button>
-                </form>
-                <button
-                  onClick={() => setShowRegister(false)}
-                  className="mt-4 text-blue-500"
-                >
-                  Back to Login
-                </button>
+                <Card className="w-full max-w-md mx-auto mt-10">
+                  <CardHeader className="flex justify-center">
+                    <h1 className="text-2xl font-semibold">Register</h1>
+                  </CardHeader>
+                  <CardBody className="flex flex-row gap-2 items-center justify-center">
+                    <Button onClick={() => navigate("/donatur-signup")} color="blue" className="mt-2">Donatur</Button>
+                    <Button onClick={() => navigate("/orphanage-signup")} color="blue" className="mt-2">Orphanage</Button>
+                  </CardBody>
+                  <CardFooter className="flex justify-center">
+                    <p className="text-center">Already have an account? <Link onClick={() => setShowRegister(false)} className="text-blue-500">Login</Link></p>
+                  </CardFooter>
+                </Card>
               </div>
             )}
           </div>

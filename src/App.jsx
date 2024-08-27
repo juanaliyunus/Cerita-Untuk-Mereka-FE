@@ -2,6 +2,8 @@ import { Route, Router, Routes } from "react-router-dom";
 import HomePage from "./pages/admin/HomePage";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/auth /AuthPage";
+import DonaturSignUp from "./pages/auth /DonaturSignUp";
+import OrphanageSignUp from "./pages/auth /OrphanagaseSignUp";
 
 function App() {
   return (
@@ -10,6 +12,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin" element={<HomePage />} />
         <Route path="/login" element={<AuthPage />} />
+        <Route path="/donatur-signup" element={<DonaturSignUp />} />
+        <Route path="/orphanage-signup" element={<OrphanageSignUp />} />
       </Routes>
     </>
   );

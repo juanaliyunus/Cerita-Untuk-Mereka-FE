@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import LogoBlack from "../assets/Logo Black.png";
 import LogoWhite from "../assets/Logo White.png";
 import SwicthTheme from "./SwicthTheme";
+import { Helmet } from "react-helmet";
 
 function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -37,6 +38,9 @@ function Navbar() {
 
   return (
     <div>
+    <Helmet>
+      <title>Cerita Untuk Mereka</title>
+    </Helmet>
       <NextNavbar onMenuOpenChange={setIsMenuOpen} position="static">
         <NavbarContent>
           <NavbarMenuToggle
@@ -49,7 +53,7 @@ function Navbar() {
               alt="Logo" 
               className="w-10 h-10" 
             />
-            <p className="font-bold text-inherit">Cerita Untuk Mereka</p>
+            <p className="font-bold text-inherit">erita Untuk Mereka</p>
           </NavbarBrand>
         </NavbarContent>
 
@@ -80,17 +84,14 @@ function Navbar() {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify="end">
-          <NavbarItem className="hidden lg:flex">
-            <Link href="#">Login</Link>
-          </NavbarItem>
           <NavbarItem>
             <SwicthTheme />
             {isLoggedIn ? (
-              <Button as={Link} color="primary" href="#" variant="flat">
+              <Button as={Link} color="primary" href="/" variant="flat">
                 Logout
               </Button>
             ) : (
-              <Button as={Link} color="primary" href="#" variant="flat">
+              <Button as={Link} color="primary" href="/login" variant="flat">
                 Sign In
               </Button>
             )}
@@ -105,7 +106,7 @@ function Navbar() {
                     index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
                   }
                   className="w-full"
-                  href="#"
+                  href={item === "Home" ? "/" : item === "Orphanage" ? "/orphanage" : "/about"}
                   size="lg"
                 >
                   {item}
