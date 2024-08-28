@@ -5,8 +5,9 @@ import AuthPage from "./pages/auth/AuthPage";
 import DonaturSignUp from "./pages/auth/DonaturSignUp";
 import OrphanageSignUp from "./pages/auth/OrphanagaseSignUp";
 import HomePageOrphanage from "./pages/orphanage/HomePage";
-import HomePageDonatur from "./pages/donor/HomePage";
+import OrphanagaseListPage from "./pages/donor/OrphanagaseListPage";
 import DonatePage from "./pages/donor/DonatePage";
+import DonaturPage from "./pages/donor/DonaturPage";
 
 function App() {
   return (
@@ -19,8 +20,9 @@ function App() {
         <Route path="/orphanage-signup" element={<OrphanageSignUp />} />
         <Route path="/orphanage-dashboard" element={<HomePageOrphanage />} />
         <Route path="/donatur-dashboard" element={<LandingPage />} />
-        <Route path="/donatur-orphanageList" element={<HomePageDonatur />} />
+        <Route path="/donatur-orphanageList" element={<OrphanagaseListPage />} />
         <Route path="/donatur-donate" element={<DonatePage />} />
+        <Route path="/donatur-profile" element={<DonaturPage />} />
       </Routes>
     </>
   );

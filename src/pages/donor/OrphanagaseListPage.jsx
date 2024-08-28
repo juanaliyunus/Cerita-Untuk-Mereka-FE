@@ -1,8 +1,7 @@
 import React from "react";
+import Footer from "../../component/Footer";
 import Navbar from "../../component/Navbar";
 import OrphanageList from "../../component/OrphanageList";
-import BookList from "../../component/BookList";
-import Footer from "../../component/Footer";
 
 function HomePage() {
   return (

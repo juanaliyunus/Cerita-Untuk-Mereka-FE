@@ -10,16 +10,18 @@ import {
     Navbar as NextNavbar
 } from "@nextui-org/react";
 import { useTheme } from "next-themes";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import LogoBlack from "../assets/Logo Black.png";
 import LogoWhite from "../assets/Logo White.png";
 import SwicthTheme from "./SwicthTheme";
 import { Helmet } from "react-helmet";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
+import { AvatarContex } from '../contex/AvatarContex';
 
-function Navbar() {
+const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { avatar, setAvatar } = useContext(AvatarContex);
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -71,7 +73,7 @@ function Navbar() {
           {isLoggedIn && (
             <NavbarItem>
               <Link 
-                href="/orphanage" 
+                href="/donatur-orphanageList" 
                 className={({ isActive }) => isActive ? 'text-blue-500' : 'text-foreground'}
               >
                 Orphanage
@@ -93,12 +95,12 @@ function Navbar() {
             {isLoggedIn ? (
               <>
                 <Dropdown
-                  label={<Avatar alt="User settings" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjsP8tb6mL5AfRlt3ob7JaufKY_3ZXzpQsVA&s" rounded />}
+                  label={<Avatar alt="User settings" img={avatar} rounded className="border-2 border-white rounded-full bg-white" />}
                   arrowIcon={false}
                   inline
                 >
                   <DropdownItem>
-                    <Link href="/profileDonor">Profile</Link>
+                    <Link href="/donatur-profile">Profile</Link>
                   </DropdownItem>
                   <DropdownItem>
                     <Link href="/settingsDonor">settings</Link>
