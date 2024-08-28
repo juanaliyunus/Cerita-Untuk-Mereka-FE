@@ -95,7 +95,7 @@ const DonaturSignUp = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axiosInstance.post("/api/v1/auth/register/donor", {
+      const response = await axiosInstance.post("/auth/register/donor", {
         username: data.username,
         password: data.password,
         donor: {

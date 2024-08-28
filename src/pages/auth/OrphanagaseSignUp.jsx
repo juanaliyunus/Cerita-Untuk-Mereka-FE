@@ -32,7 +32,7 @@ const orphanageFormSchema = z.object({
     phone_number: z.string().min(10).max(13),
     email: z.string().email(),
     description: z.string().max(200),
-    web_url: z.string().url().optional(),
+    web_url: z.string().url().or(z.literal("")).optional(),
   }),
 });
 
@@ -72,9 +72,10 @@ const OrphanageSignUp = () => {
   }, [password, setError, clearErrors]);
 
   const onSubmit = async (data) => {
+    console.log("Form submitted", data); // Tambahkan logging di sini
     try {
-      const response = await axiosInstance.post('/api/v1/auth/register/orphanages', data);
-      if (response.status === 201) {
+      const response = await axiosInstance.post('/auth/register/orphanages', data);
+      if (response.status === 201 || response.status === 200) {
         toast.success("Pendaftaran berhasil");
         navigate("/login");
       }
@@ -125,18 +126,93 @@ const OrphanageSignUp = () => {
         </CardHeader>
         <Divider />
         <CardBody>
-          <form className="flex flex-col justify-center" onSubmit={handleSubmit(onSubmit)}>
-            <FormField name="username" control={control} label="Username" errors={errors} />
-            <FormField name="password" control={control} label="Password" type="password" errors={errors} />
-            <FormField name="orphanages.name" control={control} label="Nama Panti Asuhan" errors={errors.orphanages} />
-            <FormField name="orphanages.address" control={control} label="Alamat" component={Textarea} errors={errors.orphanages} />
-            <FormField name="orphanages.phone_number" control={control} label="Nomor Telepon" inputMode="numeric" pattern="[0-9]*" errors={errors.orphanages} />
-            <FormField name="orphanages.email" control={control} label="Email" type="email" errors={errors.orphanages} />
-            <FormField name="orphanages.description" control={control} label="Deskripsi" component={Textarea} errors={errors.orphanages} />
-            <FormField name="orphanages.web_url" control={control} label="URL Website (opsional)" errors={errors.orphanages} />
-            <Button type="submit" color="primary">Daftar</Button>
+          <form
+            className="flex flex-col justify-center"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            {renderInput("username", "Username", "text", {}, control, errors)}
+            {renderInput("password", "Password", "password", {}, control, errors)}
+            {renderInput("orphanages.name", "Nama Panti Asuhan", "text", {}, control, errors)}
+            {renderInput("orphanages.email", "Email", "email", {}, control, errors)}
+            {renderInput("orphanages.phone_number", "Nomor Telepon", "text", {
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+              onInput: (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              },
+            }, control, errors)}
+            <Controller
+              name="orphanages.address"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <Textarea
+                    {...field}
+                    label="Alamat"
+                    className="mb-4"
+                    style={{ border: "none", outline: "none" }}
+                  />
+                  {error && (
+                    <span className="text-red-500 text-sm">{error.message}</span>
+                  )}
+                </>
+              )}
+            />
+            <Controller
+              name="orphanages.description"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <Textarea
+                    {...field}
+                    label="Deskripsi"
+                    className="mb-4"
+                    style={{ border: "none", outline: "none" }}
+                  />
+                  {error && (
+                    <span className="text-red-500 text-sm">{error.message}</span>
+                  )}
+                </>
+              )}
+            />
+            <Controller
+              name="orphanages.web_url"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <Input
+                    {...field}
+                    label="URL Website (opsional)"
+                    className="mb-4"
+                    style={{ border: "none", outline: "none" }}
+                    type="text"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "") {
+                        field.onChange(""); // Ubah "-" menjadi string kosong
+                        clearErrors("orphanages.web_url");
+                      } else if (!/\.\w{2,}$/.test(value)) {
+                        setError("orphanages.web_url", { type: "manual", message: "URL harus mengandung .com, .id, atau . lainnya" });
+                      } else {
+                        clearErrors("orphanages.web_url");
+                        field.onChange(value);
+                      }
+                    }}
+                  />
+                  {error && (
+                    <span className="text-red-500 text-sm">{error.message}</span>
+                  )}
+                </>
+              )}
+            />
+            <Button type="submit" color="primary">
+              Daftar
+            </Button>
             <p className="text-center mt-2">
-              Sudah punya akun? <Link to="/login" className="text-blue-500">Masuk</Link>
+              Sudah punya akun?{" "}
+              <Link to="/login" className="text-blue-500">
+                Masuk
+              </Link>
             </p>
           </form>
         </CardBody>
@@ -145,7 +221,7 @@ const OrphanageSignUp = () => {
   );
 };
 
-const FormField = ({ name, control, label, component: Component = Input, errors, ...props }) => {
+const renderInput = (name, label, type = "text", props = {}, control, errors) => {
   const fieldErrors = name.split('.').reduce((obj, key) => obj && obj[key], errors) || {};
   
   return (
@@ -154,12 +230,13 @@ const FormField = ({ name, control, label, component: Component = Input, errors,
       control={control}
       render={({ field }) => (
         <>
-          <Component
+          <Input
             {...field}
             {...props}
             label={label}
             className="mb-4"
             style={{ border: "none", outline: "none" }}
+            type={type}
           />
           {field.value && fieldErrors.message && (
             <span className="text-red-500">{fieldErrors.message.split(", ")[0]}</span>

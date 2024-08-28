@@ -6,16 +6,13 @@ import Footer from "../../component/Footer";
 
 function HomePage() {
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}> 
       <Navbar />
-      <div className="container mx-32 flex justify-center  mt-10 flex-col">
+      <div style={{ flex: 1 }} className="container mx-32 flex  mt-10 flex-col"> 
         <OrphanageList />
-        <BookList />
       </div>
-      <div>
-        <Footer />
-      </div>
-    </>
+      <Footer />
+    </div>
   );
 }
 

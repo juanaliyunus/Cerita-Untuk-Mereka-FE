@@ -67,7 +67,7 @@ const AuthPage = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/api/v1/auth/login", formData);
+      const response = await axiosInstance.post("/auth/login", formData);
       const token = response.data.data.token;
       console.log("test: ",response)
       if (typeof token !== "string") {
@@ -84,7 +84,7 @@ const AuthPage = () => {
 
       if (user.role === "ROLE_DONOR") {
         navigate("/donatur-dashboard");
-      } else if (user.role === "ROLE_ORPHANAGE") {
+      } else if (user.role === "ROLE_ORPHANAGES") {
         navigate("/orphanage-dashboard");
       }
     } catch (error) {

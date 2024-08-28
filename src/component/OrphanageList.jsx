@@ -13,12 +13,14 @@ import {
   TableRow,
 } from "flowbite-react";
 import SearchIcon from "../assets/SearchIcon";
+import { useNavigate } from "react-router-dom";
 
 function OrphanageList() {
   const [orphanages, setOrphanages] = useState([]);
   const [orphanageBooks, setOrphanageBooks] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredOrphanages, setFilteredOrphanages] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axiosInstance.get('/orphanageBooks').then(response => {
@@ -76,6 +78,7 @@ function OrphanageList() {
             <TableHeadCell>Description</TableHeadCell>
             <TableHeadCell>Book List</TableHeadCell>
             <TableHeadCell>Books Needed</TableHeadCell>
+            <TableHeadCell>Action</TableHeadCell>
           </TableHead>
           <TableBody>
             {filteredOrphanages.map(orphanage => (
@@ -103,6 +106,9 @@ function OrphanageList() {
                             </DropdownItem>
                         ))}
                     </Dropdown>
+                </TableCell>
+                <TableCell>
+                    <Button onClick={() => navigate("/donatur-donate")}>Donate</Button>
                 </TableCell>
               </TableRow>
             ))}

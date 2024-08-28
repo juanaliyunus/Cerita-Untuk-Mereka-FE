@@ -15,6 +15,7 @@ import LogoBlack from "../assets/Logo Black.png";
 import LogoWhite from "../assets/Logo White.png";
 import SwicthTheme from "./SwicthTheme";
 import { Helmet } from "react-helmet";
+import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
 
 function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -87,16 +88,30 @@ function Navbar() {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify="end">
-          <NavbarItem>
             <SwicthTheme />
+          <NavbarItem>
             {isLoggedIn ? (
-              <Button as={Link} color="primary" href="/" variant="flat" onClick={() => {
-                localStorage.removeItem('token');
-                sessionStorage.removeItem('token');
-                setIsLoggedIn(false);
-              }}>
-                Logout
-              </Button>
+              <>
+                <Dropdown
+                  label={<Avatar alt="User settings" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjsP8tb6mL5AfRlt3ob7JaufKY_3ZXzpQsVA&s" rounded />}
+                  arrowIcon={false}
+                  inline
+                >
+                  <DropdownItem>
+                    <Link href="/profileDonor">Profile</Link>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <Link href="/settingsDonor">settings</Link>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <Link href="/" onClick={() => {
+                      localStorage.removeItem('token');
+                      sessionStorage.removeItem('token');
+                      setIsLoggedIn(false);
+                    }}>Logout</Link>
+                  </DropdownItem>
+                </Dropdown>
+              </>
             ) : (
               <Button as={Link} color="primary" href="/login" variant="flat">
                 Sign In
