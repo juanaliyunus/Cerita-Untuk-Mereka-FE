@@ -7,12 +7,14 @@ import Footer from "../../component/Footer";
 function HomePage() {
   return (
     <>
-      <Navbar />  
-     <div className="container mx-32 flex justify-center  mt-10 flex-col">
+      <Navbar />
+      <div className="container mx-32 flex justify-center  mt-10 flex-col">
         <OrphanageList />
         <BookList />
-     </div>
+      </div>
+      <div>
         <Footer />
+      </div>
     </>
   );
 }

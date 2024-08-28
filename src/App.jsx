@@ -1,9 +1,9 @@
 import { Route, Router, Routes } from "react-router-dom";
 import HomePage from "./pages/admin/HomePage";
 import LandingPage from "./pages/LandingPage";
-import AuthPage from "./pages/auth /AuthPage";
-import DonaturSignUp from "./pages/auth /DonaturSignUp";
-import OrphanageSignUp from "./pages/auth /OrphanagaseSignUp";
+import AuthPage from "./pages/auth/AuthPage";
+import DonaturSignUp from "./pages/auth/DonaturSignUp";
+import OrphanageSignUp from "./pages/auth/OrphanagaseSignUp";
 import HomePageOrphanage from "./pages/orphanage/HomePage";
 import HomePageDonatur from "./pages/donor/HomePage";
 

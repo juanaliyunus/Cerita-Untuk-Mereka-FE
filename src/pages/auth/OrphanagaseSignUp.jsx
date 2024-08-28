@@ -17,77 +17,52 @@ import axiosInstance from "../../lib/axiosInstance";
 import { toast } from "react-toastify";
 
 const orphanageFormSchema = z.object({
-  username: z
-    .string()
-    .min(3)
-    .max(20)
-    .refine(val => !/\s/.test(val), {
-      message: "Username must not contain spaces",
-    })
-    .refine(val => !/^[0-9]/.test(val), {
-      message: "Username must not start with a number",
-    })
-    .refine(val => !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val), {
-      message: "Username must not contain special characters",
-    })
-    .refine(val => !/[^\w\s]/.test(val), {
-      message: "Username must not contain special characters",
-    }),
-  password: z
-    .string()
-    .min(8)
-    .max(20)
-    .refine(val => /[A-Z]/.test(val), {
-      message: "Password must contain at least 1 uppercase letter",
-    })
-    .refine(val => /[a-z]/.test(val), {
-      message: "Password must contain at least 1 lowercase letter",
-    })
-    .refine(val => /\d/.test(val), {
-      message: "Password must contain at least 1 number",
-    })
-    .refine(val => /[@$!%*?&]/.test(val), {
-      message: "Password must contain at least 1 special character",
-    }),
-  name: z.string().min(3).max(50),
-  address: z.string().max(100),
-  phone: z.string().min(10).max(13),
-  email: z.string().email(),
-  description: z.string().max(200),
+  username: z.string().min(3).max(20)
+    .refine(val => !/\s/.test(val), "Username tidak boleh mengandung spasi")
+    .refine(val => !/^[0-9]/.test(val), "Username tidak boleh dimulai dengan angka")
+    .refine(val => !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val), "Username tidak boleh mengandung karakter khusus"),
+  password: z.string().min(8).max(20)
+    .refine(val => /[A-Z]/.test(val), "Password harus mengandung minimal 1 huruf besar")
+    .refine(val => /[a-z]/.test(val), "Password harus mengandung minimal 1 huruf kecil")
+    .refine(val => /\d/.test(val), "Password harus mengandung minimal 1 angka")
+    .refine(val => /[@$!%*?&]/.test(val), "Password harus mengandung minimal 1 karakter khusus"),
+  orphanages: z.object({
+    name: z.string().min(3).max(50),
+    address: z.string().max(100),
+    phone_number: z.string().min(10).max(13),
+    email: z.string().email(),
+    description: z.string().max(200),
+    web_url: z.string().url().optional(),
+  }),
 });
 
 const OrphanageSignUp = () => {
   const navigate = useNavigate();
-  const orphanageForm = useForm({
+  const { control, handleSubmit, setError, clearErrors, formState: { errors } } = useForm({
     defaultValues: {
       username: "",
       password: "",
-      name: "",
-      address: "",
-      phone: "",
-      email: "",
-      description: "",
+      orphanages: {
+        name: "",
+        address: "",
+        phone_number: "",
+        email: "",
+        description: "",
+        web_url: "",
+      },
     },
     resolver: zodResolver(orphanageFormSchema),
   });
 
-  const { setError, clearErrors } = orphanageForm;
-  const password = useWatch({ control: orphanageForm.control, name: "password" });
+  const password = useWatch({ control, name: "password" });
 
   React.useEffect(() => {
-    const passwordErrors = [];
-    if (password && !/[A-Z]/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 uppercase letter");
-    }
-    if (password && !/[a-z]/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 lowercase letter");
-    }
-    if (password && !/\d/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 number");
-    }
-    if (password && !/[@$!%*?&]/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 special character such as @$!%*?&");
-    }
+    const passwordErrors = [
+      { condition: !/[A-Z]/.test(password), message: "Password harus mengandung minimal 1 huruf besar" },
+      { condition: !/[a-z]/.test(password), message: "Password harus mengandung minimal 1 huruf kecil" },
+      { condition: !/\d/.test(password), message: "Password harus mengandung minimal 1 angka" },
+      { condition: !/[@$!%*?&]/.test(password), message: "Password harus mengandung minimal 1 karakter khusus" },
+    ].filter(({ condition }) => condition).map(({ message }) => message);
 
     if (passwordErrors.length > 0) {
       setError("password", { type: "manual", message: passwordErrors.join(", ") });
@@ -96,226 +71,102 @@ const OrphanageSignUp = () => {
     }
   }, [password, setError, clearErrors]);
 
-  const registerOrphanage = async data => {
-    // Memeriksa apakah nama panti sudah ada
-    const existingOrphanageResponse = await axiosInstance.get(
-      `/orphanages?name=${data.name}`
-    );
-    if (existingOrphanageResponse.data.length > 0) {
-      throw new Error("Orphanage name already exists");
+  const onSubmit = async (data) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/register/orphanages', data);
+      if (response.status === 201) {
+        toast.success("Pendaftaran berhasil");
+        navigate("/login");
+      }
+    } catch (error) {
+      handleRegistrationError(error);
     }
-
-    const userData = {
-      username: data.username,
-      password: data.password,
-      role: "orphanagase", // Menambahkan role orphanagase
-    };
-    const orphanageData = {
-      name: data.name,
-      address: data.address,
-      phone: data.phone,
-      email: data.email,
-      description: data.description,
-    };
-
-    // Menyimpan data ke tabel users
-    const userResponse = await axiosInstance.post("/users", userData);
-
-    // Menyimpan data ke tabel orphanages
-    const orphanageResponse = await axiosInstance.post(
-      "/orphanages",
-      orphanageData
-    );
-
-    return orphanageResponse.data;
   };
 
-  const onSubmit = async data => {
-    try {
-      // Memeriksa apakah username sudah ada
-      const existingUserResponse = await axiosInstance.get(
-        `/users?username=${data.username}`
-      );
-      if (existingUserResponse.data.length > 0) {
-        throw new Error("Username already exists");
-      }
+  const handleRegistrationError = (error) => {
+    if (!error.response) {
+      toast.error("Tidak dapat terhubung ke server. Periksa koneksi Anda.");
+      return;
+    }
 
-      await registerOrphanage(data);
-      toast.success("Orphanage registered successfully");
-      navigate("/login");
-    } catch (error) {
-      toast.error(error.message);
+    const { data } = error.response;
+    if (data.errors) {
+      Object.entries(data.errors).forEach(([field, messages]) => {
+        setError(field, { type: "manual", message: messages.join(", ") });
+      });
+    } else if (data.message) {
+      handleSpecificError(data.message);
+    } else {
+      toast.error(`Kesalahan: ${error.response.statusText}`);
+    }
+  };
+
+  const handleSpecificError = (message) => {
+    if (message.includes("email sudah digunakan")) {
+      setError("email", { type: "manual", message: "Email ini sudah terdaftar" });
+    } else if (message.includes("username sudah digunakan")) {
+      setError("username", { type: "manual", message: "Username ini sudah digunakan" });
+    } else {
+      toast.error(`Kesalahan: ${message}`);
     }
   };
 
   return (
     <div>
       <Helmet>
-        <title>Orphanage Sign Up</title>
+        <title>Pendaftaran Panti Asuhan</title>
       </Helmet>
       <Link to="/" className="w-10 h-10">
-        <img
-          src={
-            "https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
-          }
-          alt="back"
-          className="w-10 h-10"
-        />
+        <img src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6" alt="kembali" className="w-10 h-10" />
       </Link>
-      <div>
-        <Card className="w-full max-w-md mx-auto mt-10">
-          <CardHeader>
-            <h1 className="text-2xl font-semibold mb-2 text-center">
-              Orphanage Sign Up
-            </h1>
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <form
-              className="flex flex-col justify-center"
-              onSubmit={orphanageForm.handleSubmit(onSubmit)}
-            >
-              <Controller
-                name="username"
-                control={orphanageForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Username"
-                      className="mb-4"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="password"
-                control={orphanageForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Password"
-                      className="mb-4"
-                      type="password"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="name"
-                control={orphanageForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Orphanage Name"
-                      className="mb-4"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="address"
-                control={orphanageForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Textarea
-                      {...field}
-                      label="Address"
-                      className="mb-4"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="phone"
-                control={orphanageForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Phone"
-                      className="mb-4"
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      style={{ border: "none", outline: "none" }}
-                      onInput={(e) => {
-                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                      }} // Menghapus karakter non-angka saat diinput
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="email"
-                control={orphanageForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Email"
-                      className="mb-4"
-                      type="email"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="description"
-                control={orphanageForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Textarea
-                      {...field}
-                      label="Description"
-                      className="mb-4"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Button type="submit" color="primary">
-                Sign Up
-              </Button>
-              <p className="text-center mt-2">
-                Already have an account?{" "}
-                <Link to="/login" className="text-blue-500">
-                  Login
-                </Link>
-              </p>
-            </form>
-          </CardBody>
-        </Card>
-      </div>
+      <Card className="w-full max-w-md mx-auto mt-10">
+        <CardHeader>
+          <h1 className="text-2xl font-semibold mb-2 text-center">Pendaftaran Panti Asuhan</h1>
+        </CardHeader>
+        <Divider />
+        <CardBody>
+          <form className="flex flex-col justify-center" onSubmit={handleSubmit(onSubmit)}>
+            <FormField name="username" control={control} label="Username" errors={errors} />
+            <FormField name="password" control={control} label="Password" type="password" errors={errors} />
+            <FormField name="orphanages.name" control={control} label="Nama Panti Asuhan" errors={errors.orphanages} />
+            <FormField name="orphanages.address" control={control} label="Alamat" component={Textarea} errors={errors.orphanages} />
+            <FormField name="orphanages.phone_number" control={control} label="Nomor Telepon" inputMode="numeric" pattern="[0-9]*" errors={errors.orphanages} />
+            <FormField name="orphanages.email" control={control} label="Email" type="email" errors={errors.orphanages} />
+            <FormField name="orphanages.description" control={control} label="Deskripsi" component={Textarea} errors={errors.orphanages} />
+            <FormField name="orphanages.web_url" control={control} label="URL Website (opsional)" errors={errors.orphanages} />
+            <Button type="submit" color="primary">Daftar</Button>
+            <p className="text-center mt-2">
+              Sudah punya akun? <Link to="/login" className="text-blue-500">Masuk</Link>
+            </p>
+          </form>
+        </CardBody>
+      </Card>
     </div>
+  );
+};
+
+const FormField = ({ name, control, label, component: Component = Input, errors, ...props }) => {
+  const fieldErrors = name.split('.').reduce((obj, key) => obj && obj[key], errors) || {};
+  
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => (
+        <>
+          <Component
+            {...field}
+            {...props}
+            label={label}
+            className="mb-4"
+            style={{ border: "none", outline: "none" }}
+          />
+          {field.value && fieldErrors.message && (
+            <span className="text-red-500">{fieldErrors.message.split(", ")[0]}</span>
+          )}
+        </>
+      )}
+    />
   );
 };
 

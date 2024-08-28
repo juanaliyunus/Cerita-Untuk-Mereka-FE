@@ -67,14 +67,16 @@ function Navbar() {
               Home
             </Link>
           </NavbarItem>
-          <NavbarItem>
-            <Link 
-              href="/orphanage" 
-              className={({ isActive }) => isActive ? 'text-blue-500' : 'text-foreground'}
-            >
-              Orphanage
-            </Link>
-          </NavbarItem>
+          {isLoggedIn && (
+            <NavbarItem>
+              <Link 
+                href="/orphanage" 
+                className={({ isActive }) => isActive ? 'text-blue-500' : 'text-foreground'}
+              >
+                Orphanage
+              </Link>
+            </NavbarItem>
+          )}
           <NavbarItem>
             <Link 
               href="/about" 
@@ -104,6 +106,7 @@ function Navbar() {
         </NavbarContent>
         <NavbarMenu>
           {menuItems
+            .filter(item => isLoggedIn || item !== "Orphanage")
             .map((item, index) => (
               <NavbarMenuItem key={`${item}-${index}`}>
                 <Link

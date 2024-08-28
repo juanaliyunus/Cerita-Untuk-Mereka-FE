@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
@@ -8,289 +9,234 @@ import {
   Input,
   Textarea,
 } from "@nextui-org/react";
-import React from "react";
 import { Helmet } from "react-helmet";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { toast } from "react-toastify";
 import axiosInstance from "../../lib/axiosInstance";
-import { toast } from "react-toastify"; // Import toast
 
 const signupFormSchema = z.object({
   username: z
     .string()
     .min(3)
     .max(20)
-    .refine(val => !/\s/.test(val), {
-      message: "Username must not contain spaces",
+    .refine((val) => !/\s/.test(val), {
+      message: "Username tidak boleh mengandung spasi",
     })
-    .refine(val => !/^[0-9]/.test(val), {
-      message: "Username must not start with a number",
+    .refine((val) => !/^[0-9]/.test(val), {
+      message: "Username tidak boleh dimulai dengan angka",
     })
-    .refine(val => !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val), {
-      message: "Username must not contain special characters",
-    })
-    .refine(val => !/[^\w\s]/.test(val), {
-      message: "Username must not contain special characters",
+    .refine((val) => !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val), {
+      message: "Username tidak boleh mengandung karakter khusus",
     }),
-  fullname: z.string().min(3).max(20),
   password: z
     .string()
     .min(8)
     .max(20)
-    .refine(val => /[A-Z]/.test(val), {
-      message: "Password must contain at least 1 uppercase letter",
+    .refine((val) => /[A-Z]/.test(val), {
+      message: "Password harus mengandung minimal 1 huruf besar",
     })
-    .refine(val => /[a-z]/.test(val), {
-      message: "Password must contain at least 1 lowercase letter",
+    .refine((val) => /[a-z]/.test(val), {
+      message: "Password harus mengandung minimal 1 huruf kecil",
     })
-    .refine(val => /\d/.test(val), {
-      message: "Password must contain at least 1 number",
+    .refine((val) => /\d/.test(val), {
+      message: "Password harus mengandung minimal 1 angka",
     })
-    .refine(val => /[@$!%*?&]/.test(val), {
+    .refine((val) => /[@$!%*?&]/.test(val), {
       message:
-        "Password must contain at least 1 special character such as @$!%*?&",
+        "Password harus mengandung minimal 1 karakter khusus seperti @$!%*?&",
     }),
-  email: z.string().email({ message: "Email tidak valid" }), // Perbaikan di sini
-  phone: z.string().min(10).max(13),
-  address: z.string().max(100),
+  donor: z.object({
+    email: z.string().email({ message: "Email tidak valid" }),
+    address: z.string().max(100),
+    phone_number: z.string().min(10).max(13),
+    full_name: z.string().min(3).max(20),
+  }),
 });
 
 const DonaturSignUp = () => {
   const navigate = useNavigate();
-  const signupForm = useForm({
+  const { control, handleSubmit, watch, setError, clearErrors } = useForm({
     defaultValues: {
       username: "",
-      fullname: "",
       password: "",
-      email: "",
-      phone: "",
-      address: "",
+      donor: { email: "", address: "", phone_number: "", full_name: "" },
     },
     resolver: zodResolver(signupFormSchema),
   });
 
-  const { watch, setError, clearErrors } = signupForm;
   const password = watch("password");
 
-  React.useEffect(() => {
+  useEffect(() => {
     const passwordErrors = [];
-    if (password && !/[A-Z]/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 uppercase letter");
-    }
-    if (password && !/[a-z]/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 lowercase letter");
-    }
-    if (password && !/\d/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 number");
-    }
-    if (password && !/[@$!%*?&]/.test(password)) {
-      passwordErrors.push("Password must contain at least 1 special character such as @$!%*?&");
+    if (password) {
+      if (!/[A-Z]/.test(password))
+        passwordErrors.push("Password harus mengandung minimal 1 huruf besar");
+      if (!/[a-z]/.test(password))
+        passwordErrors.push("Password harus mengandung minimal 1 huruf kecil");
+      if (!/\d/.test(password))
+        passwordErrors.push("Password harus mengandung minimal 1 angka");
+      if (!/[@$!%*?&]/.test(password))
+        passwordErrors.push(
+          "Password harus mengandung minimal 1 karakter khusus seperti @$!%*?&"
+        );
     }
 
     if (passwordErrors.length > 0) {
-      setError("password", { type: "manual", message: passwordErrors.join(", ") });
+      setError("password", {
+        type: "manual",
+        message: passwordErrors.join(", "),
+      });
     } else {
       clearErrors("password");
     }
   }, [password, setError, clearErrors]);
 
-  const registerDonatur = async data => {
-    // Memisahkan data untuk tabel users dan donors
-    const userData = {
-      username: data.username,
-      password: data.password,
-      role: "donor", // Menambahkan role donatur
-    };
-    const donorData = {
-      fullname: data.fullname,
-      email: data.email,
-      phone: data.phone,
-      address: data.address,
-    };
-
-    // Menyimpan data ke tabel users
-    const userResponse = await axiosInstance.post("/users", userData);
-
-    // Menyimpan data ke tabel donors
-    const donorResponse = await axiosInstance.post("/donors", donorData);
-
-    return { user: userResponse.data, donor: donorResponse.data };
-  };
-
-  const onSubmit = async data => {
-    console.log("Form submitted", data); // Tambahkan log di sini
+  const onSubmit = async (data) => {
     try {
-      // Memeriksa apakah username sudah ada
-      const existingUserResponse = await axiosInstance.get(
-        `/users?username=${data.username}`
-      );
-      if (existingUserResponse.data.length > 0) {
-        throw new Error("Username already exists");
+      const response = await axiosInstance.post("/api/v1/auth/register/donor", {
+        username: data.username,
+        password: data.password,
+        donor: {
+          email: data.donor.email,
+          address: data.donor.address,
+          phone_number: data.donor.phone_number,
+          full_name: data.donor.full_name,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Pendaftaran berhasil");
+        navigate("/login");
+      } else {
+        throw new Error("Respons tidak diharapkan dari server");
       }
-
-      await registerDonatur(data);
-      toast.success("Register Success");
-      navigate("/login");
-      // Handle success (e.g., redirect to login page)
     } catch (error) {
-      // Handle error (e.g., show error message)
-      toast.error(error.message); // Menampilkan notifikasi error
+      console.error("Kesalahan saat pendaftaran:", error);
+      if (error.response) {
+        const errorData = error.response.data;
+        if (errorData.message === "Username already exists") {
+          setError("username", {
+            type: "manual",
+            message: "Username sudah terdaftar",
+          });
+        } else if (errorData.message === "Email already exists") {
+          setError("donor.email", {
+            type: "manual",
+            message: "Email sudah terdaftar",
+          });
+        } else {
+          const errorMessage =
+            errorData.message ||
+            errorData.error ||
+            error.response.statusText ||
+            "Terjadi kesalahan pada server";
+          toast.error(`Kesalahan pendaftaran: ${errorMessage}`);
+        }
+
+        if (errorData.errors) {
+          Object.entries(errorData.errors).forEach(([field, message]) => {
+            setError(field, { type: "manual", message });
+          });
+        }
+      } else if (error.request) {
+        toast.error(
+          "Tidak dapat terhubung ke server. Periksa koneksi Anda dan coba lagi."
+        );
+      } else {
+        toast.error("Terjadi kesalahan saat pendaftaran. Silakan coba lagi.");
+      }
     }
   };
+
+  const renderInput = (name, label, type = "text", options = {}) => (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => (
+        <>
+          <Input
+            {...field}
+            label={label}
+            type={type}
+            className="mb-4"
+            style={{ border: "none", outline: "none" }}
+            {...options}
+          />
+          {error && (
+            <span className="text-red-500 text-sm">{error.message}</span>
+          )}
+        </>
+      )}
+    />
+  );
 
   return (
     <div>
       <Helmet>
-        <title>Donatur Sign Up</title>
+        <title>Pendaftaran Donatur</title>
       </Helmet>
       <Link to="/" className="w-10 h-10">
         <img
-          src={
-            "https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
-          }
-          alt="back"
+          src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
+          alt="kembali"
           className="w-10 h-10"
         />
       </Link>
-      <div>
-        <Card className="w-full max-w-md mx-auto mt-10">
-          <CardHeader>
-            <h1 className="text-2xl font-semibold mb-2 text-center">
-              Donatur Sign Up
-            </h1>
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <form
-              className="flex flex-col justify-center"
-              onSubmit={signupForm.handleSubmit(onSubmit)} // Pastikan ini sudah benar
-            >
-              <Controller
-                name="username"
-                control={signupForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Username"
-                      className="mb-4"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="fullname"
-                control={signupForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Fullname"
-                      className="mb-4"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="password"
-                control={signupForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Password"
-                      className="mb-4"
-                      type="password"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500 text-sm">
-                        {error.message}
-                      </span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="email"
-                control={signupForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Email"
-                      className="mb-4"
-                      type="email"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span> // Menampilkan pesan kesalahan
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="phone"
-                control={signupForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      {...field}
-                      label="Phone"
-                      className="mb-4"
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      style={{ border: "none", outline: "none" }}
-                      onInput={(e) => {
-                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                      }} // Menghapus karakter non-angka saat diinput
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Controller
-                name="address"
-                control={signupForm.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Textarea
-                      {...field}
-                      label="Address"
-                      className="mb-4"
-                      style={{ border: "none", outline: "none" }}
-                    />
-                    {error && (
-                      <span className="text-red-500">{error.message}</span>
-                    )}
-                  </>
-                )}
-              />
-              <Button type="submit" color="primary">
-                Sign Up
-              </Button>
-              <p className="text-center mt-2">
-                Already have an account?{" "}
-                <Link to="/login" className="text-blue-500">
-                  Login
-                </Link>
-              </p>
-            </form>
-          </CardBody>
-        </Card>
-      </div>
+      <Card className="w-full max-w-md mx-auto mt-10">
+        <CardHeader>
+          <h1 className="text-2xl font-semibold mb-2 text-center">
+            Pendaftaran Donatur
+          </h1>
+        </CardHeader>
+        <Divider />
+        <CardBody>
+          <form
+            className="flex flex-col justify-center"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            {renderInput("username", "Username")}
+            {renderInput("donor.full_name", "Nama Lengkap")}
+            {renderInput("password", "Password", "password")}
+            {renderInput("donor.email", "Email", "email")}
+            {renderInput("donor.phone_number", "Nomor Telepon", "text", {
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+              onInput: (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              },
+            })}
+            <Controller
+              name="donor.address"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <Textarea
+                    {...field}
+                    label="Alamat"
+                    className="mb-4"
+                    style={{ border: "none", outline: "none" }}
+                  />
+                  {error && (
+                    <span className="text-red-500 text-sm">
+                      {error.message}
+                    </span>
+                  )}
+                </>
+              )}
+            />
+            <Button type="submit" color="primary">
+              Daftar
+            </Button>
+            <p className="text-center mt-2">
+              Sudah punya akun?{" "}
+              <Link to="/login" className="text-blue-500">
+                Masuk
+              </Link>
+            </p>
+          </form>
+        </CardBody>
+      </Card>
     </div>
   );
 };

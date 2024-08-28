@@ -61,14 +61,13 @@ function OrphanageList() {
     <div className='flex flex-col'>
     <h1 className='text-2xl font-bold'>Orphanage List</h1>
         <Input
-          className="w-72 max-w-xs"
+          className="w-72 max-w-xs border-none"
           placeholder="Search"
           startContent={<SearchIcon />}
           value={search}
           onChange={e => setSearch(e.target.value)}
-          border="none"
         />
-        <Table color="secondary">
+        <Table color="secondary" className="mt-4">
           <TableHead className="text-center">
             <TableHeadCell>Nama</TableHeadCell>
             <TableHeadCell>Alamat</TableHeadCell>

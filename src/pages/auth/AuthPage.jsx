@@ -11,8 +11,14 @@ import {
   Checkbox,
   Input,
 } from "@nextui-org/react";
-import { Button, ButtonGroup } from "flowbite-react";
+import { Button } from "flowbite-react";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
+
+const loginSchema = z.object({
+  username: z.string().min(3).max(20),
+  password: z.string().min(8),
+});
 
 const AuthPage = () => {
   const [showRegister, setShowRegister] = useState(false);
@@ -26,32 +32,28 @@ const AuthPage = () => {
     );
     setIsDarkMode(darkModeMediaQuery.matches);
 
-    const handleChange = e => setIsDarkMode(e.matches);
+    const handleChange = (e) => setIsDarkMode(e.matches);
     darkModeMediaQuery.addEventListener("change", handleChange);
 
     return () => darkModeMediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   useEffect(() => {
-    // const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-    const token = localStorage.getItem("token");
-    if (token) {
+    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+    // const token = localStorage.getItem("token");
+    if (!token === null) {
+      console.log(token)
       const user = jwtDecode(token);
       console.log(user.role);
-      if (user.role === "DONOR") {
+      if (user.role === "ROLE_DONOR") {
         navigate("/donatur-dashboard");
-      } else if (user.role === "ORPHANAGE") {
+      } else if (user.role === "ROLE_ORPHANAGE") {
         navigate("/orphanage-dashboard");
       }
     }
   }, [navigate]);
 
-  const loginSchema = z.object({
-    username: z.string().min(3).max(20),
-    password: z.string().min(8),
-  });
-
-  const handleLogin = async e => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const formData = {
       username: e.target.username.value,
@@ -65,11 +67,9 @@ const AuthPage = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/users", formData);
-      // const token = response.data.token;
-      const token = localStorage.getItem("token");
-
-      // Tambahkan pengecekan apakah token adalah string
+      const response = await axiosInstance.post("/api/v1/auth/login", formData);
+      const token = response.data.data.token;
+      console.log("test: ",response)
       if (typeof token !== "string") {
         throw new Error("Invalid token format");
       }
@@ -77,13 +77,10 @@ const AuthPage = () => {
       const user = jwtDecode(token);
 
       if (rememberMe) {
-        Cookies.set("token", token, { expires: 7 });
-      } else {
         localStorage.setItem("token", token);
+      } else {
+        sessionStorage.setItem("token", token);
       }
-
-      // Simpan role dan id ke localStorage
-      // localStorage.setItem("role", user.role);
 
       if (user.role === "ROLE_DONOR") {
         navigate("/donatur-dashboard");
@@ -92,6 +89,15 @@ const AuthPage = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
+      if (error.code === "ERR_NETWORK") {
+        toast.error("Kesalahan jaringan. Pastikan Anda terhubung ke internet dan server berjalan.");
+      } else if (error.response) {
+        toast.error(`Kesalahan: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        toast.error("Tidak dapat terhubung ke server. Periksa koneksi Anda.");
+      } else {
+        toast.error("Terjadi kesalahan saat mengirim permintaan.");
+      }
     }
   };
 
@@ -137,7 +143,7 @@ const AuthPage = () => {
                       />
                       <Checkbox
                         checked={rememberMe}
-                        onChange={e => setRememberMe(e.target.checked)}
+                        onChange={(e) => setRememberMe(e.target.checked)}
                       >
                         Remember me
                       </Checkbox>
