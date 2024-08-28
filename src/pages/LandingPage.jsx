@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import Navbar from "../component/Navbar";
-import { Helmet } from "react-helmet";
-import { Slide } from "react-slideshow-image";
-import { Card, CardBody, CardFooter, CardHeader, Image } from "@nextui-org/react";
-import { Link } from "react-router-dom";
-import OrphanageList from "../component/OrphanageList";
-import Slider from "../component/Slider";
+import React from "react";
 import Footer from "../component/Footer";
+import Navbar from "../component/Navbar";
+import OrphanageCard from "../component/OrphanageCard";
+import Slider from "../component/Slider";
 
 const LandingPage = () => {
  
@@ -16,7 +11,7 @@ const LandingPage = () => {
     <>
       <Navbar />
       <Slider />
-      <OrphanageList />
+      <OrphanageCard />
       <div className="flex items-center justify-center">
         <div className="w-full">
           <h1 className="text-2xl font-bold text-center mt-11">Cerita Untuk Mereka</h1>

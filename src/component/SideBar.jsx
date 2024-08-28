@@ -29,7 +29,14 @@ const SideBar=()=>{
                         <Sidebar.Item href="/orphanage/pengaturan" icon={GrSettingsOption}>
                             Pengaturan
                         </Sidebar.Item>
-                        <Sidebar.Item href="/" icon={BiLogOut}>
+                        <Sidebar.Item 
+                            href="/" 
+                            icon={BiLogOut}
+                            onClick={() => {
+                                localStorage.removeItem('token');
+                                sessionStorage.removeItem('token');
+                            }}
+                        >
                             Logout
                         </Sidebar.Item>
                         

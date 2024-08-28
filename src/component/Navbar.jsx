@@ -31,7 +31,8 @@ function Navbar() {
   useEffect(() => {
     setMounted(true);
     // Simulasi cek login
-    setIsLoggedIn(false); 
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    setIsLoggedIn(!!token); 
   }, []);
 
   if (!mounted) return null;
@@ -87,7 +88,11 @@ function Navbar() {
           <NavbarItem>
             <SwicthTheme />
             {isLoggedIn ? (
-              <Button as={Link} color="primary" href="/" variant="flat">
+              <Button as={Link} color="primary" href="/" variant="flat" onClick={() => {
+                localStorage.removeItem('token');
+                sessionStorage.removeItem('token');
+                setIsLoggedIn(false);
+              }}>
                 Logout
               </Button>
             ) : (

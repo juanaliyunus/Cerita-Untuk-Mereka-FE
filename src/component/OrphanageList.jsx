@@ -1,68 +1,117 @@
-import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react'
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { Input } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../lib/axiosInstance";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "flowbite-react";
+import SearchIcon from "../assets/SearchIcon";
 
 function OrphanageList() {
-  const navigate = useNavigate();
+  const [orphanages, setOrphanages] = useState([]);
+  const [orphanageBooks, setOrphanageBooks] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filteredOrphanages, setFilteredOrphanages] = useState([]);
+
+  useEffect(() => {
+    axiosInstance.get('/orphanageBooks').then(response => {
+      console.log("Test Buku: ", response.data);
+      setOrphanageBooks(response.data);
+    }).catch(error => {
+      console.error('Error fetching orphanage books:', error);
+    });
+  }, []);
+  
+  useEffect(() => {
+    axiosInstance
+      .get("/orphanages")
+      .then(response => {
+        console.log(response.data);
+        setOrphanages(response.data);
+        setFilteredOrphanages(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching orphanages:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    setFilteredOrphanages(
+      orphanages
+        .filter(
+          orphanage =>
+            orphanage.name.toLowerCase().includes(search.toLowerCase()) ||
+            orphanage.address.toLowerCase().includes(search.toLowerCase()) ||
+            orphanage.phone.toLowerCase().includes(search.toLowerCase()) ||
+            orphanage.email.toLowerCase().includes(search.toLowerCase())
+        )
+        .sort((a, b) => a.name.localeCompare(b.name))
+    );
+  }, [search, orphanages]);
+
   return (
     <>
-    <h1 className="text-center text-2xl font-bold mt-5">
-          Cerita Untuk Mereka
-        </h1>
-    <div className="flex flex-wrap items-center justify-center mt-6">
-    <div className="flex flex-row gap-5 max-w-screen-xl">
-      <Card className="max-w-sm max-h-full bg-sky-500 font-semibold" >
-        <CardHeader>
-          <img onClick={() => navigate('/orphanage/1')} src={"https://o-cdn-cas.sirclocdn.com/parenting/images/panti_asuhan-.width-800.format-webp.webp"} alt="Orphanage" className="w-full h-full object-cover rounded-t-lg cursor-pointer" />
-        </CardHeader>
-        <CardBody>
-          <h1 onClick={() => navigate('/orphanage/1')} className="cursor-pointer">Panti Asuhan 1</h1>
-          <p className="font-light">
-            Panti Asuhan 1 adalah tempat yang menyediakan asuhan bagi anak-anak yang tidak memiliki keluarga.
-          </p>
-        </CardBody>
-        <CardFooter className="flex flex-col gap-2 font-light justify-start items-stretch">
-          <h1>Jl. Raya Kedungjaya No. 123, Kedungjaya, Jawa Timur</h1>
-          <h1>081234567890</h1>
-          <h1>panti1@gmail.com</h1>
-        </CardFooter>
-      </Card>
-      <Card className="max-w-sm max-h-full bg-sky-500 font-semibold">
-        <CardHeader>
-          <img onClick={() => navigate('/orphanage/2')} src={"https://www.sahabatyatim.com/wp-content/uploads/2021/05/kegiatan-ke-panti-asuhan.jpg"} alt="Orphanage" className="w-full h-full object-cover rounded-t-lg cursor-pointer" />
-        </CardHeader>
-        <CardBody>
-          <h1 onClick={() => navigate('/orphanage/2')} className="cursor-pointer">Panti Asuhan 2</h1>
-          <p className="font-light">
-            Panti Asuhan 2 adalah tempat yang menyediakan asuhan bagi anak-anak yang tidak memiliki keluarga.
-          </p>
-        </CardBody>
-        <CardFooter className="flex flex-col gap-2 font-light justify-start items-stretch">
-          <h1>Jl. Raya Kedungjaya No. 123, Kedungjaya, Jawa Timur</h1>
-          <h1>081234567890</h1>
-          <h1>panti1@gmail.com</h1>
-        </CardFooter>
-      </Card>
-      <Card className="max-w-sm max-h-full bg-sky-500 font-semibold">
-        <CardHeader>
-          <img onClick={() => navigate('/orphanage/3')} src={"https://yiim.or.id/wp-content/uploads/2021/04/panti.jpg"} alt="Orphanage" className="w-full h-full object-cover rounded-t-lg cursor-pointer" />
-        </CardHeader>
-        <CardBody>
-          <h1 onClick={() => navigate('/orphanage/3')} className="cursor-pointer">Panti Asuhan 3</h1>
-          <p className="font-light">
-            Panti Asuhan 3 adalah tempat yang menyediakan asuhan bagi anak-anak yang tidak memiliki keluarga.
-          </p>
-        </CardBody>
-        <CardFooter className="flex flex-col gap-2 font-light justify-start items-stretch">
-          <h1>Jl. Raya Kedungjaya No. 123, Kedungjaya, Jawa Timur</h1>
-          <h1>081234567890</h1>
-          <h1>panti1@gmail.com</h1>
-        </CardFooter>
-      </Card>
-    </div>
-  </div>
-  </>
-  )
+    <div className='flex flex-col'>
+    <h1 className='text-2xl font-bold'>Orphanage List</h1>
+        <Input
+          className="w-72 max-w-xs"
+          placeholder="Search"
+          startContent={<SearchIcon />}
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          border="none"
+        />
+        <Table color="secondary">
+          <TableHead className="text-center">
+            <TableHeadCell>Nama</TableHeadCell>
+            <TableHeadCell>Alamat</TableHeadCell>
+            <TableHeadCell>Telepon</TableHeadCell>
+            <TableHeadCell>Email</TableHeadCell>
+            <TableHeadCell>Description</TableHeadCell>
+            <TableHeadCell>Book List</TableHeadCell>
+            <TableHeadCell>Books Needed</TableHeadCell>
+          </TableHead>
+          <TableBody>
+            {filteredOrphanages.map(orphanage => (
+              <TableRow key={orphanage.id} className="text-center">
+                <TableCell>{orphanage.name}</TableCell>
+                <TableCell>{orphanage.address}</TableCell>
+                <TableCell>{orphanage.phone}</TableCell>
+                <TableCell>{orphanage.email}</TableCell>
+                <TableCell>{orphanage.description}</TableCell>
+                <TableCell>
+                    <Dropdown>
+                        {Array.isArray(orphanageBooks) && orphanageBooks.map(book => (
+                            <DropdownItem key={book.id}>
+                                <p>{book.title}</p>
+                            </DropdownItem>
+                        ))}
+                    </Dropdown>
+                </TableCell>
+                <TableCell>
+                    <Dropdown>
+                        {Array.isArray(orphanage.booksNeeded) && orphanage.booksNeeded.map(book => (
+                            <DropdownItem key={book.id}>
+                                <img src={book.image} alt={book.title} />
+                                <p>{book.title}</p>
+                            </DropdownItem>
+                        ))}
+                    </Dropdown>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
+  );
 }
 
-export default OrphanageList
+export default OrphanageList;
