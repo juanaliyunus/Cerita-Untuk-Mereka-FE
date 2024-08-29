@@ -1,27 +1,26 @@
 import {
-    Button,
-    Link,
-    NavbarBrand,
-    NavbarContent,
-    NavbarItem,
-    NavbarMenu,
-    NavbarMenuItem,
-    NavbarMenuToggle,
-    Navbar as NextNavbar
+  Button,
+  Link,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+  Navbar as NextNavbar
 } from "@nextui-org/react";
+import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
 import { useTheme } from "next-themes";
 import React, { useContext, useEffect, useState } from "react";
-import LogoBlack from "../assets/Logo Black.png";
-import LogoWhite from "../assets/Logo White.png";
-import SwicthTheme from "./SwicthTheme";
 import { Helmet } from "react-helmet";
-import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
-import { AvatarContex } from '../contex/AvatarContex';
+import LogoBlack from "../assets/LogoBlack.png";
+import LogoWhite from "../assets/LogoWhite.png";
+import { AvatarContext } from '../context/AvatarContext';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const { avatar, setAvatar } = useContext(AvatarContex);
+  const { avatar, setAvatar } = useContext(AvatarContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -90,7 +89,6 @@ const Navbar = () => {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify="end">
-            <SwicthTheme />
           <NavbarItem>
             {isLoggedIn ? (
               <>
@@ -98,13 +96,12 @@ const Navbar = () => {
                   label={<Avatar alt="User settings" img={avatar} rounded className="border-2 border-white rounded-full bg-white" />}
                   arrowIcon={false}
                   inline
+                  className="order-first" 
                 >
                   <DropdownItem>
                     <Link href="/donatur-profile">Profile</Link>
                   </DropdownItem>
-                  <DropdownItem>
-                    <Link href="/settingsDonor">settings</Link>
-                  </DropdownItem>
+                 
                   <DropdownItem>
                     <Link href="/" onClick={() => {
                       localStorage.removeItem('token');
@@ -131,7 +128,7 @@ const Navbar = () => {
                     index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
                   }
                   className="w-full"
-                  href={item === "Home" ? "/" : item === "Orphanage" ? "/orphanage" : "/about"}
+                  href={item === "Home" ? "/" : item === "Orphanage" ? "/donatur-orphanageList" : "/about"}
                   size="lg"
                 >
                   {item}

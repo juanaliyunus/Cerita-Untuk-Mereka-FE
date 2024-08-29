@@ -1,13 +1,13 @@
 import React, { createContext, useState } from 'react';
 
-export const AvatarContex = createContext();
+export const AvatarContext = createContext();
 
 export const AvatarProvider = ({ children }) => {
     const [avatar, setAvatar] = useState("https://www.freeiconspng.com/uploads/profile-icon-9.png");
 
     return (
-        <AvatarContex.Provider value={{ avatar, setAvatar }}>
+        <AvatarContext.Provider value={{ avatar, setAvatar }}>
             {children}
-        </AvatarContex.Provider>
+        </AvatarContext.Provider>
     );
 };

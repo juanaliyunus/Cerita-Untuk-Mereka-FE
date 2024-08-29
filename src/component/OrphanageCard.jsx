@@ -11,7 +11,7 @@ function OrphanageList() {
         </h1>
     <div className="flex flex-wrap items-center justify-center mt-6">
     <div className="flex flex-row gap-5 max-w-screen-xl">
-      <Card className="max-w-sm max-h-full bg-sky-500 font-semibold" >
+      <Card className="max-w-sm max-h-full font-semibold" >
         <CardHeader>
           <img onClick={() => navigate('/orphanage/1')} src={"https://o-cdn-cas.sirclocdn.com/parenting/images/panti_asuhan-.width-800.format-webp.webp"} alt="Orphanage" className="w-full h-full object-cover rounded-t-lg cursor-pointer" />
         </CardHeader>
@@ -27,7 +27,7 @@ function OrphanageList() {
           <h1>panti1@gmail.com</h1>
         </CardFooter>
       </Card>
-      <Card className="max-w-sm max-h-full bg-sky-500 font-semibold">
+      <Card className="max-w-sm max-h-full font-semibold">
         <CardHeader>
           <img onClick={() => navigate('/orphanage/2')} src={"https://www.sahabatyatim.com/wp-content/uploads/2021/05/kegiatan-ke-panti-asuhan.jpg"} alt="Orphanage" className="w-full h-full object-cover rounded-t-lg cursor-pointer" />
         </CardHeader>
@@ -43,7 +43,7 @@ function OrphanageList() {
           <h1>panti1@gmail.com</h1>
         </CardFooter>
       </Card>
-      <Card className="max-w-sm max-h-full bg-sky-500 font-semibold">
+      <Card className="max-w-sm max-h-full font-semibold">
         <CardHeader>
           <img onClick={() => navigate('/orphanage/3')} src={"https://yiim.or.id/wp-content/uploads/2021/04/panti.jpg"} alt="Orphanage" className="w-full h-full object-cover rounded-t-lg cursor-pointer" />
         </CardHeader>

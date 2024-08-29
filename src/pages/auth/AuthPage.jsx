@@ -1,8 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
-import axiosInstance from "../../lib/axiosInstance";
 import {
   Card,
   CardBody,
@@ -13,7 +8,13 @@ import {
 } from "@nextui-org/react";
 import { Button } from "flowbite-react";
 import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import axiosInstance from "../../lib/axiosInstance";
+import LogoBlack from "../../assets/LogoBlack.png";
+
 
 const loginSchema = z.object({
   username: z.string().min(3).max(20),
@@ -24,6 +25,10 @@ const AuthPage = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showError, setShowError] = useState(false); // Tambahkan state untuk error
+  const [errorMessage, setErrorMessage] = useState(""); // Tambahkan state untuk pesan kesalahan
+  const [usernameError, setUsernameError] = useState(""); // Tambahkan state untuk error username
+  const [passwordError, setPasswordError] = useState(""); // Tambahkan state untuk error password
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,21 +60,39 @@ const AuthPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const formData = {
-      username: e.target.username.value,
-      password: e.target.password.value,
-    };
+    const username = e.target.username.value;
+    const password = e.target.password.value;
 
+    let hasError = false;
+
+    if (!username) {
+      setUsernameError("Username tidak boleh kosong");
+      hasError = true;
+    } else{
+      setUsernameError("");
+    }
+
+    if (!password) {
+      setPasswordError("Password tidak boleh kosong");
+      hasError = true;
+    } else {
+      setPasswordError("");
+    }
+
+    if (hasError) return;
+
+    const formData = { username, password };
     const result = loginSchema.safeParse(formData);
     if (!result.success) {
       console.error("Validation error:", result.error.errors);
+      setErrorMessage("Username atau Password Salah");
       return;
     }
 
     try {
       const response = await axiosInstance.post("/auth/login", formData);
       const token = response.data.data.token;
-      console.log("test: ",response)
+      console.log("test: ", response);
       if (typeof token !== "string") {
         throw new Error("Invalid token format");
       }
@@ -90,13 +113,20 @@ const AuthPage = () => {
     } catch (error) {
       console.error("Login error:", error);
       if (error.code === "ERR_NETWORK") {
-        toast.error("Kesalahan jaringan. Pastikan Anda terhubung ke internet dan server berjalan.");
+        setErrorMessage("Kesalahan jaringan. Pastikan Anda terhubung ke internet dan server berjalan.");
       } else if (error.response) {
-        toast.error(`Kesalahan: ${error.response.data.message || error.response.statusText}`);
+        if (error.response.status === 401) {
+          console.error("Error 401:", error.response.data);
+          setShowError(true);
+          setErrorMessage("Username atau Password Salah");
+        } else if(error.response.status === 400){
+          setShowError(true);
+          setErrorMessage(`username/password tidak boleh kosong`);
+        }
       } else if (error.request) {
-        toast.error("Tidak dapat terhubung ke server. Periksa koneksi Anda.");
+        setErrorMessage("Tidak dapat terhubung ke server. Periksa koneksi Anda.");
       } else {
-        toast.error("Terjadi kesalahan saat mengirim permintaan.");
+        setErrorMessage("Terjadi kesalahan saat mengirim permintaan.");
       }
     }
   };
@@ -112,7 +142,7 @@ const AuthPage = () => {
             "https://img.icons8.com/?size=100&id=Knx9yksqRI1K&format=png&color=000000"
           }
           alt="back"
-          className="w-10 h-10"
+          className="w-10 h-10 absolute top-5 left-5"
         />
       </Link>
       <div className="flex justify-center items-center h-screen">
@@ -121,26 +151,51 @@ const AuthPage = () => {
             {!showRegister ? (
               <div>
                 <Card>
-                  <CardHeader>
+                  <CardHeader className="flex justify-center items-center flex-col">
+                    <img src={LogoBlack} alt="logo" className="w-10 h-10" />
                     <h1 className="text-2xl font-semibold mb-2 text-center">
                       Login
                     </h1>
+                    
                   </CardHeader>
                   <CardBody>
+                  {errorMessage && (
+                        <p className="text-red-500 text-xs">
+                          {errorMessage}
+                        </p>
+                      )}
                     <form onSubmit={handleLogin}>
                       <Input
                         label="Username"
                         name="username"
                         className="mb-4"
                         style={{ border: "none", outline: "none" }}
+                        onChange={() => {
+                          setUsernameError(""); 
+                          setErrorMessage(""); 
+                        }}
                       />
+                      {usernameError && (
+                        <p className="text-red-500 text-xs">
+                          {usernameError}
+                        </p>
+                      )}
                       <Input
                         label="Password"
                         name="password"
                         className="mb-4"
                         type="password"
                         style={{ border: "none", outline: "none" }}
+                        onChange={() => {
+                          setPasswordError("");
+                          setErrorMessage("");
+                        }} // Reset error saat input berubah
                       />
+                      {passwordError && (
+                        <p className="text-red-500 text-xs">
+                          {passwordError}
+                        </p>
+                      )}
                       <Checkbox
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}

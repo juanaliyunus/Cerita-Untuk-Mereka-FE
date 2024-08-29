@@ -2,7 +2,6 @@ import { Sidebar } from "flowbite-react"
 import { BiBookAdd, BiLogOut } from "react-icons/bi"
 import { CgAdd } from "react-icons/cg"
 import { HiHome, HiUserCircle } from "react-icons/hi2"
-import SwicthTheme from "./SwicthTheme"
 
 const SideBar=()=>{
     return(
@@ -22,9 +21,7 @@ const SideBar=()=>{
                         <Sidebar.Item href="/donatur-checkDonation" icon={BiBookAdd}>
                             Check Donation
                         </Sidebar.Item>
-                        <Sidebar.Item href="/donatur-editProfile" icon={CgAdd}>
-                            Edit Profile
-                        </Sidebar.Item>
+                        
                         <Sidebar.Item 
                             href="/" 
                             icon={BiLogOut}
@@ -38,7 +35,6 @@ const SideBar=()=>{
                         
                     </Sidebar.ItemGroup>
                 </Sidebar.Items>
-                <SwicthTheme />
             </Sidebar>
         </div>
     )

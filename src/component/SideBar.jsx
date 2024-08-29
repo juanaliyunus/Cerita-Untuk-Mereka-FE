@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react"
 import { BiBookAdd, BiLogOut } from "react-icons/bi"
-import { CgAdd } from "react-icons/cg"
+import { CgAdd, CgProfile } from "react-icons/cg"
 import { GiConfirmed } from "react-icons/gi"
 import { GrSettingsOption } from "react-icons/gr"
 import { HiChartPie } from "react-icons/hi2"
@@ -17,17 +17,17 @@ const SideBar=()=>{
                         <Sidebar.Item href="/orphanage-dashboard" icon={HiChartPie}>
                             Dashboard
                         </Sidebar.Item>
-                        <Sidebar.Item href="/orphanage/request-buku" icon={BiBookAdd}>
+                        <Sidebar.Item href="/orphanage-requestBook" icon={BiBookAdd}>
                             Request Buku
                         </Sidebar.Item>
-                        <Sidebar.Item href="/orphanage/sugest-panti" icon={CgAdd}>
+                        <Sidebar.Item href="/orphanage-sugest" icon={CgAdd}>
                             Sugest Panti
                         </Sidebar.Item>
-                        <Sidebar.Item href="/orphanage/konfirmasi-barang" icon={GiConfirmed}>
+                        <Sidebar.Item href="/orphanage-confirmBook" icon={GiConfirmed}>
                             Konfirmasi Barang
                         </Sidebar.Item>
-                        <Sidebar.Item href="/orphanage/pengaturan" icon={GrSettingsOption}>
-                            Pengaturan
+                        <Sidebar.Item href="/orphanage-profile" icon={CgProfile}>
+                            Edit Profile
                         </Sidebar.Item>
                         <Sidebar.Item 
                             href="/" 

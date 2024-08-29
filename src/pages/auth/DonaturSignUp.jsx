@@ -15,6 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import axiosInstance from "../../lib/axiosInstance";
+import LogoBlack from "../../assets/LogoBlack.png";
 
 const signupFormSchema = z.object({
   username: z
@@ -171,6 +172,26 @@ const DonaturSignUp = () => {
     />
   );
 
+  const renderTextarea = (name, label) => (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => (
+        <>
+          <Textarea
+            {...field}
+            label={label}
+            className="mb-4"
+            style={{ border: "none", outline: "none" }}
+          />
+          {error && (
+            <span className="text-red-500 text-sm">{error.message}</span>
+          )}
+        </>
+      )}
+    />
+  );
+
   return (
     <div>
       <Helmet>
@@ -184,7 +205,8 @@ const DonaturSignUp = () => {
         />
       </Link>
       <Card className="w-full max-w-md mx-auto mt-10">
-        <CardHeader>
+        <CardHeader className="flex justify-center items-center flex-col">
+          <img src={LogoBlack} alt="logo" className="w-10 h-10" />
           <h1 className="text-2xl font-semibold mb-2 text-center">
             Pendaftaran Donatur
           </h1>
@@ -206,25 +228,7 @@ const DonaturSignUp = () => {
                 e.target.value = e.target.value.replace(/[^0-9]/g, "");
               },
             })}
-            <Controller
-              name="donor.address"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <>
-                  <Textarea
-                    {...field}
-                    label="Alamat"
-                    className="mb-4"
-                    style={{ border: "none", outline: "none" }}
-                  />
-                  {error && (
-                    <span className="text-red-500 text-sm">
-                      {error.message}
-                    </span>
-                  )}
-                </>
-              )}
-            />
+            {renderTextarea("donor.address", "Alamat")}
             <Button type="submit" color="primary">
               Daftar
             </Button>
