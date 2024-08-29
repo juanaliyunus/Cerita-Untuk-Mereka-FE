@@ -70,7 +70,7 @@ const Profile = () => {
       const formData = new FormData();
       formData.append("avatar", file);
 
-      const url = "/donors";
+      const url = "/avatars";
       console.log("Uploading avatar to URL:", url); // Log URL
 
       const token = sessionStorage.getItem("token") || localStorage.getItem("token");
@@ -83,6 +83,7 @@ const Profile = () => {
         const response = await axiosInstance.post(url, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data' // Tambahkan header ini
           },
         });
         const data = response.data;
@@ -98,7 +99,7 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    const url = "/donors";
+    const url = "/avatars";
     console.log("Saving profile to URL:", url); // Log URL
 
     const token = sessionStorage.getItem("token") || localStorage.getItem("token");
@@ -107,17 +108,14 @@ const Profile = () => {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+
     try {
-      const response = await axiosInstance.put(url, {
-        avatar,
-        fullname,
-        email,
-        password,
-        phoneNumber,
-        address,
-      }, {
+      const response = await axiosInstance.post(url, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data' // Tambahkan header ini
         },
       });
       const data = response.data;
@@ -137,7 +135,7 @@ const Profile = () => {
     <div className="flex justify-center w-screen">
       <Card className="mt-2 mx-9">
         <img src={avatar || ""} className="w-24 h-24 bg-white rounded-full" alt="Avatar" />
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" encType="multipart/form-data">
           <input type="file" onChange={handleAvatarChange} className="mt-2" disabled={!isEditing} />
           <div className="flex items-center">
             <Label className="text-sm font-semibold mr-8 w-24">Full Name</Label>
