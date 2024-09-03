@@ -6,7 +6,7 @@ import OrphanageList from "../../component/OrphanageList";
 function HomePage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}> 
-      <Navbar />
+      <Navbar style={{ zIndex: 1000, position: 'relative' }} />
       <div style={{ flex: 1 }} className="container mx-32 flex  mt-10 flex-col"> 
         <OrphanageList />
       </div>

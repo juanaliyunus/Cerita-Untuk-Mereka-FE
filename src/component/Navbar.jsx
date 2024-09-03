@@ -16,6 +16,8 @@ import { Helmet } from "react-helmet";
 import LogoBlack from "../assets/LogoBlack.png";
 import LogoWhite from "../assets/LogoWhite.png";
 import { AvatarContext } from '../context/AvatarContext';
+import axiosInstance from "../lib/axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -35,6 +37,22 @@ const Navbar = () => {
     // Simulasi cek login
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     setIsLoggedIn(!!token); 
+
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      // Ambil data user dari API
+      axiosInstance.get(`/donors/${decodedToken.sub}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        setAvatar(response.data.data.avatar); // Asumsi response.data.avatar adalah URL avatar
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+    }
   }, []);
 
   if (!mounted) return null;
@@ -44,7 +62,7 @@ const Navbar = () => {
     <Helmet>
       <title>Cerita Untuk Mereka</title>
     </Helmet>
-      <NextNavbar onMenuOpenChange={setIsMenuOpen} position="static">
+      <NextNavbar onMenuOpenChange={setIsMenuOpen} position="fixed">
         <NavbarContent>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -93,10 +111,11 @@ const Navbar = () => {
             {isLoggedIn ? (
               <>
                 <Dropdown
-                  label={<Avatar alt="User settings" img={avatar} rounded className="border-2 border-white rounded-full bg-white" />}
+                  label={<Avatar alt="User settings" img={`http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`} rounded className="border-2 border-white rounded-full bg-white" />}
                   arrowIcon={false}
                   inline
-                  className="order-first" 
+                  className="order-first"
+                  style={{ zIndex: 1050, position: 'relative' }}
                 >
                   <DropdownItem>
                     <Link href="/donatur-profile">Profile</Link>

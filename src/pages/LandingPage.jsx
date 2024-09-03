@@ -9,8 +9,8 @@ const LandingPage = () => {
 
   return (
     <>
-      <Navbar />
-      <Slider />
+      <Navbar className="relative z-10" />
+      <Slider className="relative z-0" />
       <OrphanageCard />
       <div className="flex items-center justify-center">
         <div className="w-full">

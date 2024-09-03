@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import notFound from "../assets/404Logo.svg"
 
 const NotFoundPage = () => {
   return (
+    
     <div style={styles.container}>
-      <h1 style={styles.header}>404</h1>
+    <img src={notFound} alt="404" className="w-1/2 h-1/2" />
       <p style={styles.text}>Halaman tidak ditemukan</p>
       <Link to="/" style={styles.link}>Kembali ke Beranda</Link>
     </div>

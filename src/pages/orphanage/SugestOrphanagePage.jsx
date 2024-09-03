@@ -5,9 +5,9 @@ import { Button, Label, TextInput } from 'flowbite-react'
 
 function SugestOrphanagePage() {
   return (
-    <div className="flex flex-col sm:flex-row h-full w-full items-center justify-center">
-      <SideBar />
-      <div className="flex-grow flex-wrap p-4 flex justify-center">
+    <div className="flex h-screen items-start">
+    <SideBar />
+    <div className="flex-grow flex-wrap p-4">
         <Card className="w-full sm:w-1/2 lg:w-1/3">
           <CardHeader>
             <h1 className="text-2xl font-bold">Sugest Panti</h1>

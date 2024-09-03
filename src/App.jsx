@@ -14,6 +14,11 @@ import RequestBook from "./pages/orphanage/RequestBook";
 import ConfirmBook from "./pages/orphanage/ConfirmBook";
 import ProfileOrphanage from "./pages/orphanage/ProfileOrphanage";
 import SugestOrphanagePage from "./pages/orphanage/SugestOrphanagePage";
+import CheckDonation from "./pages/donor/CheckDonation";
+import ListUsers from "./pages/admin/ListUsers";
+import ListOrphanages from "./pages/admin/ListOrphanages";
+import AddOrphanages from "./pages/admin/AddOrphanages";
+import ConfirmBooks from "./pages/admin/ConfirmBooks";
 
 
 function App() {
@@ -22,19 +27,24 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin" element={<HomePage />} />
+        <Route path="/admin-ListUsers" element={<ListUsers />} />
+        <Route path="/admin-ListOrphanage" element={<ListOrphanages />} />
+        <Route path="/admin-AddOrphanage" element={<AddOrphanages />} />
+        <Route path="/admin-confirmBook" element={<ConfirmBooks />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/donatur-signup" element={<DonaturSignUp />} />
-        <Route path="/orphanage-signup" element={<OrphanageSignUp />} />
-        <Route path="/orphanage-dashboard" element={<HomePageOrphanage />} />
         <Route path="/donatur-dashboard" element={<LandingPage />} />
         <Route path="/donatur-orphanageList" element={<OrphanagaseListPage />} />
         <Route path="/donatur-donate" element={<DonatePage />} />
         <Route path="/donatur-profile" element={<DonaturPage />} />
-        <Route path="/orphanage-requestBook" element={<RequestBook />} />
         <Route path="/about" element={<AboutPages />} />
+        <Route path="/orphanage-requestBook" element={<RequestBook />} />
+        <Route path="/orphanage-signup" element={<OrphanageSignUp />} />
+        <Route path="/orphanage-dashboard" element={<HomePageOrphanage />} />
         <Route path="/orphanage-confirmBook" element={<ConfirmBook />} />
         <Route path="/orphanage-profile" element={<ProfileOrphanage />} />
         <Route path="/orphanage-sugest" element={<SugestOrphanagePage />} />
+        <Route path="/donatur-checkDonation" element={<CheckDonation />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
