@@ -3,7 +3,7 @@ import Footer from "../../component/Footer";
 import Navbar from "../../component/Navbar";
 import OrphanageList from "../../component/OrphanageList";
 
-function HomePage() {
+function OrphanageListPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}> 
       <Navbar style={{ zIndex: 1000, position: 'relative' }} />
@@ -15,4 +15,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default OrphanageListPage;

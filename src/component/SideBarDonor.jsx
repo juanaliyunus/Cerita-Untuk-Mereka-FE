@@ -6,37 +6,60 @@ import { HiHome, HiUserCircle } from "react-icons/hi2"
 const SideBar=()=>{
     return(
         <div className="flex h-screen">
-            <Sidebar aria-label="Sidebar with content" className="max-w-1/5">
-                <Sidebar.Items>
-                <h1 className="text-2xl font-bold text-center justify-center items-center">
-                    Dashboard
-                </h1>
-                    <Sidebar.ItemGroup>
-                        <Sidebar.Item href="/donatur-dashboard" icon={HiHome}>
-                            Home
-                        </Sidebar.Item>
-                        <Sidebar.Item href="/donatur-profile" icon={HiUserCircle}>
-                            Profile
-                        </Sidebar.Item>
-                        <Sidebar.Item href="/donatur-checkDonation" icon={BiBookAdd}>
-                            Check Donation
-                        </Sidebar.Item>
-                        
-                        <Sidebar.Item 
-                            href="/" 
-                            icon={BiLogOut}
-                            onClick={() => {
-                                localStorage.removeItem('token');
-                                sessionStorage.removeItem('token');
-                            }}
-                        >
-                            Logout
-                        </Sidebar.Item>
-                        
-                    </Sidebar.ItemGroup>
-                </Sidebar.Items>
-            </Sidebar>
+            <aside className="w-64 bg-gray-800 text-white shadow-lg">
+                <div className="p-6">
+                    <h1 className="text-3xl font-bold text-center mb-8">Dashboard</h1>
+                    <nav>
+                        <ul>
+                            <li>
+                                <a
+                                    href="/donatur-dashboard"
+                                    className="flex items-center py-2 px-4 hover:bg-gray-700 transition duration-300"
+                                >
+                                    <HiHome className="mr-3 text-xl" />
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="/donatur-profile"
+                                    className="flex items-center py-2 px-4 hover:bg-gray-700 transition duration-300"
+                                >
+                                    <HiUserCircle className="mr-3 text-xl" />
+                                    Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="/donatur-checkDonation"
+                                    className="flex items-center py-2 px-4 hover:bg-gray-700 transition duration-300"
+                                >
+                                    <BiBookAdd className="mr-3 text-xl" />
+                                    Check Donation
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="/"
+                                    className="flex items-center py-2 px-4 mt-8 text-red-400 hover:bg-gray-700 transition duration-300"
+                                    onClick={() => {
+                                        localStorage.removeItem('token');
+                                        sessionStorage.removeItem('token');
+                                    }}
+                                >
+                                    <BiLogOut className="mr-3 text-xl" />
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </aside>
+            <main className="flex-1 p-6">
+                {/* Content goes here */}
+            </main>
         </div>
+
     )
 }
 

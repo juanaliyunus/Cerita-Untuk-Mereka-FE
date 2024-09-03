@@ -269,24 +269,27 @@ const OrphanageSignUp = () => {
   );
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
       <Helmet>
         <title>Pendaftaran Panti Asuhan</title>
       </Helmet>
-      <Link to="/" className="w-10 h-10">
-        <img src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6" alt="kembali" className="w-10 h-10" />
+      <Link to="/" className="absolute top-5 left-5">
+        <img
+          src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
+          alt="kembali"
+          className="w-10 h-10"
+        />
       </Link>
-      <Card className="w-full max-w-md mx-auto mt-10">
-        <CardHeader className="flex justify-center items-center flex-col">
-          <img src={LogoBlack} alt="logo" className="w-10 h-10" />
-          <h1 className="text-2xl font-semibold mb-2 text-center">Pendaftaran Panti Asuhan</h1>
+      <Card className="w-full max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <CardHeader className="flex flex-col items-center mb-4">
+          <img src={LogoBlack} alt="logo" className="w-16 h-16 mb-4" />
+          <h1 className="text-3xl font-bold text-gray-800 text-center">
+            Pendaftaran Panti Asuhan
+          </h1>
         </CardHeader>
-        <Divider />
+        <Divider className="my-4" />
         <CardBody>
-          <form
-            className="flex flex-col justify-center"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             {renderInput("username", "Username")}
             {renderInput("password", "Password", "password")}
             {renderInput("orphanages.name", "Nama Panti Asuhan")}
@@ -300,13 +303,17 @@ const OrphanageSignUp = () => {
             })}
             {renderTextarea("orphanages.address", "Alamat")}
             {renderTextarea("orphanages.description", "Deskripsi")}
-            {renderInput("orphanages.web_url", "URL Website jika tidak memiliki bisa isi dengan: -", "text")}
-            <Button type="submit" color="primary">
+            {renderInput(
+              "orphanages.web_url",
+              "URL Website jika tidak memiliki bisa isi dengan: -",
+              "text"
+            )}
+            <Button type="submit" color="blue" className="w-full py-2">
               Daftar
             </Button>
-            <p className="text-center mt-2">
+            <p className="text-center mt-4 text-gray-600">
               Sudah punya akun?{" "}
-              <Link to="/login" className="text-blue-500">
+              <Link to="/login" className="text-blue-500 font-medium">
                 Masuk
               </Link>
             </p>
@@ -314,6 +321,7 @@ const OrphanageSignUp = () => {
         </CardBody>
       </Card>
     </div>
+
   );
 };
 
