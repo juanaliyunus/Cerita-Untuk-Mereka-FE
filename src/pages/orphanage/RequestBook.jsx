@@ -18,7 +18,7 @@ function RequestBook() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload
+    e.preventDefault();
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     try {
       const res = await axiosInstance.post(

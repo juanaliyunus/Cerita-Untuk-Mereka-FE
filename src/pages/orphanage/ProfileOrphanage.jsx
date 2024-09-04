@@ -1,8 +1,8 @@
+import { Card, CardBody, CardHeader, Image } from "@nextui-org/react";
+import { Button, Label, Modal, ModalBody, ModalFooter, ModalHeader, TextInput } from "flowbite-react";
+import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import SideBar from "../../component/SideBar";
-import { Card, CardBody, CardHeader, Image } from "@nextui-org/react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
-import { jwtDecode } from "jwt-decode";
 import axiosInstance from "../../lib/axiosInstance";
 
 function ProfileOrphanage() {
@@ -83,6 +83,7 @@ function ProfileOrphanage() {
 
   const handleSave = async () => {
     const url = `/orphanages/${orphanageId}`;
+
     const token = sessionStorage.getItem("token") || localStorage.getItem("token");
     if (!token) {
       console.error("No token found");
@@ -145,13 +146,17 @@ function ProfileOrphanage() {
       <SideBar />
       <div className="flex-grow p-8">
         <Card className="shadow-lg rounded-lg bg-white p-6">
-          <CardHeader className="bg-blue-500 text-white py-4 rounded-t-lg">
-            <h1 className="text-2xl font-semibold text-center">Edit Profile</h1>
+          <CardHeader>
+            <h1 className="text-2xl font-semibold text-gray-800">Edit Profile</h1>
           </CardHeader>
-          <CardBody className="space-y-4">
+          <CardBody>
             <div className="flex justify-center mb-6">
-              <Image
-                src={avatar ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}` : "path/to/default/avatar.png"}
+              <img
+                src={
+                  avatar
+                    ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`
+                    : 'path/to/default/avatar.png'
+                }
                 alt="Avatar"
                 className="w-32 h-32 rounded-full border-4 border-blue-500"
               />
@@ -166,11 +171,11 @@ function ProfileOrphanage() {
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { label: 'Name', name: 'name', type: 'text', value: name },
+                  { label: 'Nama Panti', name: 'name', type: 'text', value: name },
                   { label: 'Email', name: 'email', type: 'email', value: email },
-                  { label: 'Phone Number', name: 'phone', type: 'text', value: phone },
-                  { label: 'Address', name: 'address', type: 'text', value: address },
-                  { label: 'Description', name: 'description', type: 'text', value: description },
+                  { label: 'Nomor Telepon', name: 'phone', type: 'text', value: phone },
+                  { label: 'Alamat', name: 'address', type: 'text', value: address },
+                  { label: 'Deskripsi', name: 'description', type: 'text', value: description },
                   { label: 'Website', name: 'website', type: 'text', value: website },
                 ].map(({ label, name, type, value }) => (
                   <div key={name} className="flex flex-col gap-1">
@@ -188,7 +193,6 @@ function ProfileOrphanage() {
               </div>
               <div className="flex justify-between mt-4">
                 <Button
-                  color="blue"
                   className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150"
                   onClick={() => {
                     if (isEditing) {
@@ -198,27 +202,32 @@ function ProfileOrphanage() {
                     }
                   }}
                 >
-                  {isEditing ? "Save" : "Edit"}
+                  {isEditing ? 'Save' : 'Edit'}
                 </Button>
               </div>
-              <Modal open={openModal} onClose={() => setOpenModal(false)}>
+              <Modal open={openModal} onClose={() => setOpenModal(false)} className="p-4 bg-white shadow-lg rounded-lg">
                 <ModalHeader>
-                  <span className="text-xl font-semibold">Save Profile</span>
+                  <span className="text-xl font-semibold text-gray-800">Save Profile</span>
                 </ModalHeader>
                 <ModalBody>
                   <p className="text-lg text-gray-700">Are you sure you want to save the profile?</p>
                 </ModalBody>
-                <ModalFooter className="flex justify-center space-x-4">
+                <ModalFooter className="flex justify-center gap-4">
                   <Button
-                    color="blue"
+                    color="primary"
                     onClick={() => {
                       handleSave();
                       setOpenModal(false);
                     }}
+                    className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
                   >
                     Save
                   </Button>
-                  <Button color="gray" onClick={() => setOpenModal(false)}>
+                  <Button
+                    color="gray"
+                    onClick={() => setOpenModal(false)}
+                    className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400 transition duration-300"
+                  >
                     Cancel
                   </Button>
                 </ModalFooter>

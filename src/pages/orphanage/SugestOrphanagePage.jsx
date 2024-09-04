@@ -1,58 +1,62 @@
 import SideBar from '../../component/SideBar';
 import { Card, CardBody, CardHeader, Input, Button, Textarea } from '@nextui-org/react';
+import { Label } from 'flowbite-react';
 import { Home, Mail, Phone, MapPin } from 'lucide-react';
 
 function SuggestOrphanagePage() {
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-teal-100">
-      <SideBar />
-      <div className="flex-grow p-8 flex items-center justify-center">
-        <div className="w-full max-w-xl">
-          <Card className="shadow-lg border rounded-lg bg-white">
-            <CardHeader className="bg-blue-500 py-4 rounded-t-lg text-white">
-              <h1 className="text-2xl font-semibold text-center">Suggest an Orphanage</h1>
-            </CardHeader>
-            <CardBody className="p-6 space-y-6">
-              <p className="text-gray-700 text-center">
-                Help us extend our reach by suggesting an orphanage you know of.
-              </p>
-              <Input
-                placeholder="Enter the name of the orphanage"
-                startContent={<Home className="text-gray-600" />}
-                className="border rounded-md shadow-sm"
-              />
-              <Input
-                placeholder="Enter contact email"
-                type="email"
-                startContent={<Mail className="text-gray-600" />}
-                className="border rounded-md shadow-sm"
-              />
-              <Input
-                placeholder="Enter phone number"
-                type="tel"
-                startContent={<Phone className="text-gray-600" />}
-                className="border rounded-md shadow-sm"
-              />
-              <Textarea
-                placeholder="Enter full address"
-                startContent={<MapPin className="text-gray-600 mt-1" />}
-                className="border rounded-md shadow-sm"
-                minRows={4}
-              />
-              <div className="flex justify-center mt-6">
-                <Button
-                  color="primary"
-                  size="lg"
-                  className="w-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition duration-300"
-                >
-                  Submit Suggestion
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
-        </div>
-      </div>
-    </div>
+<div className="flex h-screen bg-gray-100">
+  <SideBar />
+  <div className="flex-grow p-8 flex items-center justify-center">
+    <Card className="w-full max-w-md mx-auto shadow-lg rounded-lg bg-white p-6">
+      <CardHeader className="text-center">
+        <h1 className="text-2xl font-semibold text-gray-800">Suggest an Orphanage</h1>
+      </CardHeader>
+      <CardBody className="pt-4">
+        <form className="space-y-4">
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm font-medium text-gray-700">Orphanage Name</Label>
+            <Input
+              placeholder="Enter the name of the orphanage"
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm font-medium text-gray-700">Contact Email</Label>
+            <Input
+              placeholder="Enter contact email"
+              type="email"
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm font-medium text-gray-700">Phone Number</Label>
+            <Input
+              placeholder="Enter phone number"
+              type="tel"
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm font-medium text-gray-700">Full Address</Label>
+            <Textarea
+              placeholder="Enter full address"
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              minRows={4}
+            />
+          </div>
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Submit Suggestion
+          </Button>
+        </form>
+      </CardBody>
+    </Card>
+  </div>
+</div>
+
   );
 }
 
