@@ -1,50 +1,58 @@
-import React from "react";
-import { Link } from "@nextui-org/react";
-import icons8facebook from "../assets/socialmedia/icons8facebook.png";
-import icons8instagram from "../assets/socialmedia/icons8instagram.png";
-import icons8linkedin from "../assets/socialmedia/icons8linkedin.png";
-import icons8x from "../assets/socialmedia/icons8x.png";
+import React from 'react';
+import { Link } from '@nextui-org/react';
+import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa'; // Ikon media sosial
 
 function Footer() {
   return (
-    <footer className="bg-gray-800 text-white py-4 w-full mt-24">
-      <div className="flex justify-center my-4 space-x-10">
-        <img
-          src={icons8facebook}
-          alt="logo facebook"
-          className="w-10 h-10"
-        ></img>
-        <img
-          src={icons8instagram}
-          alt="logo instagram"
-          className="w-10 h-10"
-        ></img>
-        <img
-          src={icons8linkedin}
-          alt="logo linkedin"
-          className="w-10 h-10"
-        ></img>
-        <img src={icons8x} alt="logo x" className="w-10 h-10"></img>
-      </div>
-      <div className="container mx-auto text-center">
-        <p>&copy; 2024 Ryfa. Semua hak dilindungi.</p>
-        <ul className="flex justify-center space-x-4 mt-2">
+    <footer className="bg-gradient-to-r from-[#6fccd8] to-[#47a9b3] text-white py-6 w-full mt-24">
+      <div className="container mx-auto text-center px-4">
+        <p className="text-lg font-semibold">&copy; 2024 Ryfa. Semua hak dilindungi.</p>
+        <ul className="flex justify-center space-x-6 mt-4">
           <li>
-            <Link href="/about" color="primary">
+            <Link href="/about" color="primary" className="hover:text-gray-200 transition duration-200">
               Tentang Kami
             </Link>
           </li>
           <li>
-            <Link href="/contact" color="primary">
+            <Link href="/contact" color="primary" className="hover:text-gray-200 transition duration-200">
               Kontak
             </Link>
           </li>
           <li>
-            <Link href="/privacy" color="primary">
+            <Link href="/privacy" color="primary" className="hover:text-gray-200 transition duration-200">
               Kebijakan Privasi
             </Link>
           </li>
         </ul>
+        <div className="flex justify-center space-x-6 mt-4">
+          <a
+            href="https://www.facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:text-gray-300 transition duration-200"
+            aria-label="Facebook"
+          >
+            <FaFacebookF size={20} />
+          </a>
+          <a
+            href="https://www.twitter.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:text-gray-300 transition duration-200"
+            aria-label="Twitter"
+          >
+            <FaTwitter size={20} />
+          </a>
+          <a
+            href="https://www.instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:text-gray-300 transition duration-200"
+            aria-label="Instagram"
+          >
+            <FaInstagram size={20} />
+          </a>
+        </div>
       </div>
     </footer>
   );
