@@ -158,117 +158,94 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex h-screen items-start">
-      <div className="flex-grow flex-wrap p-4">
-        <h1 className="text-2xl font-bold">Edit Profile</h1>
-        <Card>
-          <CardBody>
-            <div className="flex flex-row gap-2 items-center justify-center">
-              <Image
-                src={
-                  avatar
-                    ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`
-                    : "path/to/default/avatar.png"
-                }
-                alt="Avatar"
-                className="w-32 h-32 rounded-full"
-              />
-            </div>
-            <form className="flex flex-col gap-4" encType="multipart/form-data">
-              <input
-                type="file"
-                name="avatar"
-                onChange={handleAvatarChange}
-                className="mt-2"
+    <div className="flex h-screen items-start bg-gray-100">
+  <div className="flex-grow p-8 max-w-3xl mx-auto">
+    <h1 className="text-3xl font-bold mb-6 text-gray-800">Edit Profile</h1>
+    <Card className="shadow-lg rounded-lg bg-white">
+      <CardBody className="p-6">
+        <div className="flex flex-col items-center mb-6">
+          <Image
+            src={
+              avatar
+                ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`
+                : "path/to/default/avatar.png"
+            }
+            alt="Avatar"
+            className="w-32 h-32 rounded-full border-4 border-blue-500"
+          />
+          <input
+            type="file"
+            name="avatar"
+            onChange={handleAvatarChange}
+            className="mt-4"
+            disabled={!isEditing}
+          />
+        </div>
+        <form className="space-y-4" encType="multipart/form-data">
+          {[
+            { label: "Full Name", name: "fullname", value: fullname },
+            { label: "Email", name: "email", value: email },
+            { label: "Phone Number", name: "phoneNumber", value: phoneNumber },
+            { label: "Address", name: "address", value: address }
+          ].map(({ label, name, value }) => (
+            <div key={name} className="flex items-center gap-4">
+              <Label className="w-1/3 text-right">{label}</Label>
+              <TextInput
+                type="text"
+                name={name}
+                value={value}
+                onChange={handleChange}
+                className="flex-grow border border-gray-300 rounded-lg p-2"
                 disabled={!isEditing}
               />
-              <div className="flex flex-row gap-2 items-center">
-                <Label className="w-1/4">Full Name</Label>
-                <TextInput
-                  type="text"
-                  name="fullname"
-                  value={fullname}
-                  onChange={handleChange}
-                  className="flex-grow"
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="flex flex-row gap-2 items-center">
-                <Label className="w-1/4">Email</Label>
-                <TextInput
-                  type="text"
-                  name="email"
-                  value={email}
-                  onChange={handleChange}
-                  className="flex-grow"
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="flex flex-row gap-2 items-center">
-                <Label className="w-1/4">Phone Number</Label>
-                <TextInput
-                  type="text"
-                  name="phoneNumber"
-                  value={phoneNumber}
-                  onChange={handleChange}
-                  className="flex-grow"
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="flex flex-row gap-2 items-center">
-                <Label className="w-1/4">Address</Label>
-                <TextInput
-                  type="text"
-                  name="address"
-                  value={address}
-                  onChange={handleChange}
-                  className="flex-grow"
-                  disabled={!isEditing}
-                />
-              </div>
-              <Button
-                color="blue"
-                className="mt-2"
-                onClick={() => {
-                  if (isEditing) {
-                    setOpenModal(true);
-                  } else {
-                    setIsEditing(true);
-                  }
-                }}
-              >
-                {isEditing ? "Save" : "Edit"}
-              </Button>
-              <Modal show={openModal} onClose={() => setOpenModal(false)}>
-                <ModalHeader>
-                  <span className="text-xl font-semibold">Save Profile</span>
-                </ModalHeader>
-                <ModalBody>
-                  <p className="text-xl">
-                    Are you sure you want to save the profile?
-                  </p>
-                </ModalBody>
-                <ModalFooter className="flex justify-center">
-                  <Button
-                    color="blue"
-                    onClick={() => {
-                      handleSave();
-                      setOpenModal(false);
-                      setIsEditing(false);
-                    }}
-                  >
-                    Save
-                  </Button>
-                  <Button color="gray" onClick={() => setOpenModal(false)}>
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </Modal>
-            </form>
-          </CardBody>
-        </Card>
-      </div>
-    </div>
+            </div>
+          ))}
+          <div className="flex justify-end mt-6">
+            <Button
+              color="blue"
+              className="px-6 py-2"
+              onClick={() => {
+                if (isEditing) {
+                  setOpenModal(true);
+                } else {
+                  setIsEditing(true);
+                }
+              }}
+            >
+              {isEditing ? "Save" : "Edit"}
+            </Button>
+          </div>
+        </form>
+        <Modal show={openModal} onClose={() => setOpenModal(false)}>
+          <ModalHeader>
+            <span className="text-xl font-semibold">Save Profile</span>
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-lg text-gray-700">
+              Are you sure you want to save the profile?
+            </p>
+          </ModalBody>
+          <ModalFooter className="flex justify-center space-x-4">
+            <Button
+              color="blue"
+              onClick={() => {
+                handleSave();
+                setOpenModal(false);
+                setIsEditing(false);
+              }}
+            >
+              Save
+            </Button>
+            <Button color="gray" onClick={() => setOpenModal(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </CardBody>
+    </Card>
+  </div>
+</div>
+
   );
 };
 

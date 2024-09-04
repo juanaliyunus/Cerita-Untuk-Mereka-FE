@@ -133,138 +133,113 @@ const AuthPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Auth Page</title>
-      </Helmet>
-      <Link to="/" className="w-10 h-10">
-        <img
-          src={
-            "https://img.icons8.com/?size=100&id=Knx9yksqRI1K&format=png&color=000000"
-          }
-          alt="back"
-          className="w-10 h-10 absolute top-5 left-5"
-        />
-      </Link>
-      <div className="flex justify-center items-center h-screen">
-        <div className="flex flex-col justify-start items-center">
-          <div className="space-y-8">
-            {!showRegister ? (
-              <div>
-                <Card>
-                  <CardHeader className="flex justify-center items-center flex-col">
-                    <img src={LogoBlack} alt="logo" className="w-10 h-10" />
-                    <h1 className="text-2xl font-semibold mb-2 text-center">
-                      Login
-                    </h1>
-                    
-                  </CardHeader>
-                  <CardBody>
-                  {errorMessage && (
-                        <p className="text-red-500 text-xs">
-                          {errorMessage}
-                        </p>
-                      )}
-                    <form onSubmit={handleLogin}>
-                      <Input
-                        label="Username"
-                        name="username"
-                        className="mb-4"
-                        style={{ border: "none", outline: "none" }}
-                        onChange={() => {
-                          setUsernameError(""); 
-                          setErrorMessage(""); 
-                        }}
-                      />
-                      {usernameError && (
-                        <p className="text-red-500 text-xs">
-                          {usernameError}
-                        </p>
-                      )}
-                      <Input
-                        label="Password"
-                        name="password"
-                        className="mb-4"
-                        type="password"
-                        style={{ border: "none", outline: "none" }}
-                        onChange={() => {
-                          setPasswordError("");
-                          setErrorMessage("");
-                        }} // Reset error saat input berubah
-                      />
-                      {passwordError && (
-                        <p className="text-red-500 text-xs">
-                          {passwordError}
-                        </p>
-                      )}
-                      <Checkbox
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                      >
-                        Remember me
-                      </Checkbox>
-                      <Button
-                        type="submit"
-                        color="blue"
-                        className="mt-2 w-full"
-                      >
-                        Login
-                      </Button>
-                    </form>
-                  </CardBody>
-                  <CardFooter>
-                    <p className="text-center">
-                      Don't have an account?{" "}
-                      <Link
-                        onClick={() => setShowRegister(true)}
-                        className="text-blue-500"
-                      >
-                        Register
-                      </Link>
-                    </p>
-                  </CardFooter>
-                </Card>
-              </div>
-            ) : (
-              <div>
-                <Card className="w-full max-w-md mx-auto mt-10">
-                  <CardHeader className="flex justify-center">
-                    <h1 className="text-2xl font-semibold">Register</h1>
-                  </CardHeader>
-                  <CardBody className="flex flex-row gap-2 items-center justify-center">
-                    <Button
-                      onClick={() => navigate("/donatur-signup")}
-                      color="blue"
-                      className="mt-2"
-                    >
-                      Donatur
-                    </Button>
-                    <Button
-                      onClick={() => navigate("/orphanage-signup")}
-                      color="blue"
-                      className="mt-2"
-                    >
-                      Orphanage
-                    </Button>
-                  </CardBody>
-                  <CardFooter className="flex justify-center">
-                    <p className="text-center">
-                      Already have an account?{" "}
-                      <Link
-                        onClick={() => setShowRegister(false)}
-                        className="text-blue-500"
-                      >
-                        Login
-                      </Link>
-                    </p>
-                  </CardFooter>
-                </Card>
-              </div>
-            )}
+  <Helmet>
+    <title>Auth Page</title>
+  </Helmet>
+  <Link to="/" className="absolute top-5 left-5">
+    <img
+      src="https://img.icons8.com/?size=100&id=Knx9yksqRI1K&format=png&color=000000"
+      alt="back"
+      className="w-10 h-10"
+    />
+  </Link>
+  <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="bg-white p-10 rounded-lg shadow-lg max-w-md w-full">
+      {!showRegister ? (
+        <div>
+          <div className="flex flex-col items-center">
+            <img src={LogoBlack} alt="logo" className="w-16 h-16 mb-4" />
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Login</h1>
           </div>
+          {errorMessage && (
+            <p className="text-red-500 text-xs mb-4">{errorMessage}</p>
+          )}
+          <form onSubmit={handleLogin}>
+            <Input
+              label="Username"
+              name="username"
+              className="mb-4 w-full"
+              style={{ border: "none", outline: "none" }}
+              onChange={() => {
+                setUsernameError("");
+                setErrorMessage("");
+              }}
+            />
+            {usernameError && (
+              <p className="text-red-500 text-xs mb-4">{usernameError}</p>
+            )}
+            <Input
+              label="Password"
+              name="password"
+              className="mb-4 w-full"
+              type="password"
+              style={{ border: "none", outline: "none" }}
+              onChange={() => {
+                setPasswordError("");
+                setErrorMessage("");
+              }}
+            />
+            {passwordError && (
+              <p className="text-red-500 text-xs mb-4">{passwordError}</p>
+            )}
+            <div className="flex justify-between items-center mb-6">
+              <Checkbox
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              >
+                Remember me
+              </Checkbox>
+            </div>
+            <Button type="submit" color="blue" className="w-full">
+              Login
+            </Button>
+          </form>
+          <p className="text-center mt-6">
+            Don't have an account?{" "}
+            <Link
+              onClick={() => setShowRegister(true)}
+              className="text-blue-500"
+            >
+              Register
+            </Link>
+          </p>
         </div>
-      </div>
-    </>
+      ) : (
+        <div>
+          <div className="flex flex-col items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-800">Register</h1>
+          </div>
+          <div className="flex justify-between gap-4 mb-6">
+            <Button
+              onClick={() => navigate("/donatur-signup")}
+              color="blue"
+              className="w-full"
+            >
+              Donatur
+            </Button>
+            <Button
+              onClick={() => navigate("/orphanage-signup")}
+              color="blue"
+              className="w-full"
+            >
+              Orphanage
+            </Button>
+          </div>
+          <p className="text-center">
+            Already have an account?{" "}
+            <Link
+              onClick={() => setShowRegister(false)}
+              className="text-blue-500"
+            >
+              Login
+            </Link>
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+</>
   );
-};
+}
 
 export default AuthPage;
