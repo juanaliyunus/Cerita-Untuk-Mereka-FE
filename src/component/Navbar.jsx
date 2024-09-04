@@ -107,7 +107,6 @@ const Navbar = () => {
                   alt="User settings"
                   img={`http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`}
                   rounded
-                  className="border-2 border-white"
                 />
               }
               arrowIcon={false}
