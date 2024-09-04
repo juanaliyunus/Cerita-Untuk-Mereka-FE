@@ -71,7 +71,7 @@ const Navbar = () => {
             <img
               src={theme === "dark" ? LogoWhite : LogoBlack}
               alt="Logo"
-              className="w-10 h-10 rounded-full border-2 border-white"
+              className="w-10 h-10 "
             />
             <p className="font-bold text-inherit ml-2">CeritaUntukMereka</p>
           </NavbarBrand>

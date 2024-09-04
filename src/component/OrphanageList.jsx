@@ -10,6 +10,7 @@ import {
   Table,
   TextInput,
 } from "flowbite-react";
+import { Search, Heart, Book, Phone, Mail, MapPin } from "lucide-react";
 
 function OrphanageList() {
   const [orphanages, setOrphanages] = useState([]);
@@ -108,175 +109,188 @@ function OrphanageList() {
   };
 
   return (
-    <div className="p-6 bg-[#E0F7FA]min-h-screen">
-      <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
-        Orphanage List
-      </h1>
+<div className="p-8 bg-[#E0F7FA] min-h-screen">
+  {/* Title and Description */}
+  <div className="mb-12 text-center">
+    <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+      Make a difference in a child's life. Find an orphanage and donate books to inspire young minds and foster a love for reading.
+    </p>
+  </div>
 
-      {/* Search Bar */}
-      <div className="mb-6 flex justify-center">
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            className="w-full p-3 pl-10 rounded-full border-2 border-gray-300 bg-white shadow-md focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition duration-300 ease-in-out"
-            placeholder="Search orphanage by name..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+  {/* Search Bar */}
+  <div className="mb-12 flex justify-center">
+    <div className="relative w-full max-w-lg">
+      <input
+        type="text"
+        className="w-full p-4 pl-12 rounded-full border-2 border-indigo-300 bg-white shadow-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition duration-300 ease-in-out text-lg"
+        placeholder="Search orphanage by name..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-400" size={20} />
+    </div>
+  </div>
+
+  {/* Orphanage Grid */}
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">
+    {filteredOrphanages.map((orphanage) => (
+      <div
+        key={orphanage.id}
+        className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2 hover:scale-105"
+      >
+        <div className="relative">
+          <img
+            src={`http://10.10.102.142:8080/api/v1/avatars/public/${orphanage.avatar}`}
+            alt={orphanage.name}
+            className="w-full h-64 object-cover cursor-pointer"
+            onClick={() =>
+              handleViewDetailsClick(
+                orphanage,
+                `http://10.10.102.142:8080/api/v1/avatars/public/${orphanage.avatar}`
+              )
+            }
           />
+          <div className="absolute bottom-0 left-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-6 w-full">
+            <h3 className="text-2xl font-bold mb-1">{orphanage.name}</h3>
+            <p className="text-sm flex items-center">
+              <MapPin size={16} className="mr-2" />
+              {orphanage.address}
+            </p>
+          </div>
+        </div>
+        <div className="p-6 flex flex-col">
+          <p className="text-gray-600 text-sm mb-4 flex items-center">
+            <Phone size={16} className="mr-2 text-indigo-500" />
+            {orphanage.phone_number}
+          </p>
+          <div className="flex justify-between items-center mt-auto">
+            <button
+              className="bg-indigo-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-600 transition-colors duration-300 flex items-center"
+              onClick={() =>
+                handleViewDetailsClick(
+                  orphanage,
+                  `http://10.10.102.142:8080/api/v1/avatars/public/${orphanage.avatar}`
+                )
+              }
+            >
+              <Book size={18} className="mr-2" />
+              View Details
+            </button>
+            <button
+              className="bg-pink-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-pink-600 transition-colors duration-300 flex items-center"
+              onClick={() => {
+                updateDonationDetails("orphanageId", orphanage.id);
+                setIsModalDonate(true);
+              }}
+            >
+              <Heart size={18} className="mr-2" />
+              Donate
+            </button>
+          </div>
         </div>
       </div>
+    ))}
+  </div>
 
+  {/* Modal for Viewing Orphanage Details and Books */}
+  <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)} size="xl">
+    <ModalHeader>
+      <h2 className="text-3xl font-bold text-indigo-800">Orphanage Details</h2>
+    </ModalHeader>
+    <ModalBody>
+      {selectedImage && (
+        <img
+          src={selectedImage}
+          alt="Orphanage"
+          className="w-full h-80 object-cover rounded-lg mb-6 shadow-lg"
+        />
+      )}
+      {selectedOrphanage && (
+        <div className="space-y-4 text-gray-700">
+          <p className="text-2xl font-semibold text-indigo-700 mb-4">{selectedOrphanage.name}</p>
+          <p className="flex items-center">
+            <MapPin size={20} className="mr-3 text-indigo-500" />
+            <span><strong>Address:</strong> {selectedOrphanage.address}</span>
+          </p>
+          <p className="flex items-center">
+            <Phone size={20} className="mr-3 text-indigo-500" />
+            <span><strong>Phone:</strong> {selectedOrphanage.phone_number}</span>
+          </p>
+          <p className="flex items-center">
+            <Mail size={20} className="mr-3 text-indigo-500" />
+            <span><strong>Email:</strong> {selectedOrphanage.email}</span>
+          </p>
+          <p className="mt-6">
+            <strong>Description:</strong> {selectedOrphanage.description}
+          </p>
+        </div>
+      )}
+      {selectedOrphanageBooks.length > 0 && (
+        <>
+          <h3 className="text-2xl font-bold mt-8 mb-4 text-indigo-700">Books Available</h3>
+          <Table className="w-full bg-white rounded-lg overflow-hidden shadow-lg">
+            <Table.Head className="bg-indigo-100">
+              <Table.HeadCell className="py-3 px-6 text-left text-indigo-800">Title</Table.HeadCell>
+              <Table.HeadCell className="py-3 px-6 text-left text-indigo-800">Quantity</Table.HeadCell>
+            </Table.Head>
+            <Table.Body>
+              {selectedOrphanageBooks.map((book, index) => (
+                <Table.Row key={book.id} className="border-b border-gray-200 hover:bg-gray-50">
+                  <Table.Cell className="py-3 px-6">
+                    {index + 1}. {book.bookName}
+                  </Table.Cell>
+                  <Table.Cell className="py-3 px-6">
+                    {book.quantity_available}
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </>
+      )}
+    </ModalBody>
+  </Modal>
 
-      {/* Orphanage Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {filteredOrphanages.map((orphanage) => (
-          <div
-            key={orphanage.id}
-            className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden transform hover:-translate-y-2 hover:scale-105"
-          >
-            <div className="relative">
-              <img
-                src={`http://10.10.102.142:8080/api/v1/avatars/public/${orphanage.avatar}`}
-                alt={orphanage.name}
-                className="w-full h-56 object-cover cursor-pointer"
-                onClick={() =>
-                  handleViewDetailsClick(
-                    orphanage,
-                    `http://10.10.102.142:8080/api/v1/avatars/public/${orphanage.avatar}`
-                  )
-                }
-              />
-              <div className="absolute bottom-0 left-0 bg-gradient-to-t from-black to-transparent text-white p-4 w-full">
-                <h3 className="text-xl font-bold">{orphanage.name}</h3>
-                <p className="text-sm">{orphanage.address}</p>
-              </div>
-            </div>
-            <div className="p-4 flex flex-col">
-              <p className="text-gray-600 text-sm mb-4">{orphanage.phone_number}</p>
-              <div className="flex justify-between items-center mt-auto">
-                <button
-                  className="bg-orange-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-300"
-                  onClick={() =>
-                    handleViewDetailsClick(
-                      orphanage,
-                      `http://10.10.102.142:8080/api/v1/avatars/public/${orphanage.avatar}`
-                    )
-                  }
-                >
-                  View Details
-                </button>
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
-                  onClick={() => {
-                    updateDonationDetails("orphanageId", orphanage.id);
-                    setIsModalDonate(true);
-                  }}
-                >
-                  Donate
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+  {/* Modal for Donating Books */}
+  <Modal show={isModalDonate} onClose={() => setIsModalDonate(false)} size="lg">
+    <ModalHeader>
+      <h2 className="text-3xl font-bold text-indigo-800">Donate a Book</h2>
+    </ModalHeader>
+    <ModalBody>
+      <div className="grid grid-cols-1 gap-6">
+        <div>
+          <Label htmlFor="bookName" value="Book Name" className="text-lg font-semibold text-gray-700 mb-2" />
+          <TextInput
+            id="bookName"
+            value={donationDetails.bookName}
+            onChange={(e) => updateDonationDetails("bookName", e.target.value)}
+            placeholder="Enter the book name"
+            required
+            className="w-full p-3 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300"
+          />
+        </div>
+        <div>
+          <Label htmlFor="quantity" value="Quantity" className="text-lg font-semibold text-gray-700 mb-2" />
+          <TextInput
+            id="quantity"
+            type="number"
+            value={donationDetails.quantityDonated}
+            onChange={(e) => updateDonationDetails("quantityDonated", e.target.value)}
+            placeholder="Enter the quantity to donate"
+            min={1}
+            required
+            className="w-full p-3 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300"
+          />
+        </div>
+        <Button
+          onClick={handleDonateClick}
+          className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+        >
+          Donate Now
+        </Button>
       </div>
+    </ModalBody>
 
-      {/* Modal for Viewing Orphanage Details and Books */}
-      <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)} size="xl">
-        <ModalHeader>
-          <h2 className="text-2xl font-bold">Orphanage Details</h2>
-        </ModalHeader>
-        <ModalBody>
-          {selectedImage && (
-            <img
-              src={selectedImage}
-              alt="Orphanage"
-              className="w-full h-64 object-cover rounded-lg mb-4"
-            />
-          )}
-          {selectedOrphanage && (
-            <div className="space-y-4">
-              <p>
-                <strong>Name:</strong> {selectedOrphanage.name}
-              </p>
-              <p>
-                <strong>Address:</strong> {selectedOrphanage.address}
-              </p>
-              <p>
-                <strong>Phone Number:</strong> {selectedOrphanage.phone_number}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedOrphanage.email}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedOrphanage.description}
-              </p>
-            </div>
-          )}
-          {selectedOrphanageBooks.length > 0 && (
-            <>
-              <h3 className="text-xl font-bold mt-6">Books Available</h3>
-              <Table className="min-w-full bg-white">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="text-gray-800 py-2">Title</th>
-                    <th className="text-gray-800 py-2">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selectedOrphanageBooks.map((book, index) => (
-                    <tr key={book.id} className="border-t">
-                      <td className="py-2 px-4 text-gray-800">
-                        {index + 1}. {book.bookName}
-                      </td>
-                      <td className="py-2 px-4 text-gray-800">
-                        {book.quantity_available}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </>
-          )}
-        </ModalBody>
-      </Modal>
-
-      {/* Modal for Donating Books */}
-      <Modal show={isModalDonate} onClose={() => setIsModalDonate(false)} size="lg">
-        <ModalHeader>
-          <h2 className="text-2xl font-bold">Donate a Book</h2>
-        </ModalHeader>
-        <ModalBody>
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <Label htmlFor="bookName" value="Book Name" />
-              <TextInput
-                id="bookName"
-                value={donationDetails.bookName}
-                onChange={(e) => updateDonationDetails("bookName", e.target.value)}
-                placeholder="Enter the book name"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="quantity" value="Quantity" />
-              <TextInput
-                id="quantity"
-                type="number"
-                value={donationDetails.quantityDonated}
-                onChange={(e) => updateDonationDetails("quantityDonated", e.target.value)}
-                placeholder="Enter the quantity to donate"
-                min={1}
-                required
-              />
-            </div>
-            <Button
-              onClick={handleDonateClick}
-              className="bg-green-500 text-white hover:bg-green-600"
-            >
-              Donate
-            </Button>
-          </div>
-        </ModalBody>
       </Modal>
     </div>
   );
