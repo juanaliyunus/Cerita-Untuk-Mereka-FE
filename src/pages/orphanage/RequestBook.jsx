@@ -18,7 +18,7 @@ function RequestBook() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Tambahkan ini untuk mencegah reload halaman
+    e.preventDefault(); // Prevent page reload
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     try {
       const res = await axiosInstance.post(
@@ -31,7 +31,7 @@ function RequestBook() {
         }
       );
       if (res.status === 200) {
-        alert("Book requested");
+        alert("Book requested successfully");
       } else {
         alert("Failed to request book");
       }
@@ -41,33 +41,46 @@ function RequestBook() {
   };
 
   return (
-    <>
-    <div className="flex h-screen items-start">
-        <SideBar />
-        <div className="flex-grow flex-wrap p-4">
-        <Card className='w-full sm:w-2/3 md:w-1/3 ml-auto mr-auto mt-10'>
-            <CardHeader className='flex justify-center items-center'>
-                <h1 className='text-2xl font-bold'>Request Buku</h1>
-            </CardHeader>
-            <CardBody className='flex justify-center items-center'>
-            <div className='flex '>
-                <form className='flex flex-col gap-2'>
-                    <div className='flex flex-row gap-2 items-center'>
-                        <Label className='w-32'>Title</Label>
-                        <Input type="text" placeholder='Title' className='w-full p-2 rounded-md' value={book_name} onChange={(e) => setBook_Name(e.target.value)} />
-                    </div>
-                    <div className='flex flex-row gap-2 items-center'>
-                        <Label className='w-32'>Quantity</Label>
-                        <Input type="number" placeholder='Jumlah Buku' className='w-full p-2 rounded-md' value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                    </div>
-                    <Button type="submit" className='w-full p-2 rounded-md' onClick={handleSubmit}>Request</Button>
-                </form>
-            </div>
-            </CardBody>
+    <div className="flex h-screen bg-gray-100">
+      <SideBar />
+      <div className="flex-grow p-8 flex items-center justify-center">
+        <Card className="w-full max-w-md mx-auto shadow-lg rounded-lg bg-white p-6">
+          <CardHeader className="text-center">
+            <h1 className="text-2xl font-semibold text-gray-800">Request Book</h1>
+          </CardHeader>
+          <CardBody className="pt-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-medium text-gray-700">Title</Label>
+                <Input
+                  type="text"
+                  placeholder="Enter book title"
+                  className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={book_name}
+                  onChange={(e) => setBook_Name(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-medium text-gray-700">Quantity</Label>
+                <Input
+                  type="number"
+                  placeholder="Enter quantity"
+                  className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Request
+              </Button>
+            </form>
+          </CardBody>
         </Card>
-        </div>
+      </div>
     </div>
-    </>
   )
 }
 

@@ -1,46 +1,59 @@
-import React from 'react'
-import SideBar from '../../component/SideBar'
-import { Card, CardBody, CardHeader } from '@nextui-org/react'
-import { Button, Label, TextInput } from 'flowbite-react'
+import SideBar from '../../component/SideBar';
+import { Card, CardBody, CardHeader, Input, Button, Textarea } from '@nextui-org/react';
+import { Home, Mail, Phone, MapPin } from 'lucide-react';
 
-function SugestOrphanagePage() {
+function SuggestOrphanagePage() {
   return (
-    <div className="flex h-screen items-start">
-    <SideBar />
-    <div className="flex-grow flex-wrap p-4">
-        <Card className="w-full sm:w-1/2 lg:w-1/3">
-          <CardHeader>
-            <h1 className="text-2xl font-bold">Sugest Panti</h1>
-          </CardHeader>
-          <CardBody>
-            <div className="flex flex-col gap-2 items-start">
-              <div className="flex flex-row gap-2 items-center w-full">
-                <Label className="w-1/4">Nama Panti</Label>
-                <TextInput type="text" label="Name" className="flex-grow" />
-              </div>
-              <div className="flex flex-row gap-2 items-center w-full">
-                <Label className="w-1/4">Email</Label>
-                <TextInput type="text" label="Email" className="flex-grow" />
-              </div>
-              <div className="flex flex-row gap-2 items-center w-full">
-                <Label className="w-1/4">No. Telp</Label>
-                <TextInput type="text" label="No. Telp" className="flex-grow" />
-              </div>
-              <div className="flex flex-row gap-2 items-center w-full">
-                <Label className="w-1/4">Alamat</Label>
-                <TextInput type="text" label="Alamat" className="flex-grow" />
-              </div>
-              <div className="flex flex-row gap-2 items-center w-full">
-                <Button>
-                  Submit
+    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-teal-100">
+      <SideBar />
+      <div className="flex-grow p-8 flex items-center justify-center">
+        <div className="w-full max-w-xl">
+          <Card className="shadow-lg border rounded-lg bg-white">
+            <CardHeader className="bg-blue-500 py-4 rounded-t-lg text-white">
+              <h1 className="text-2xl font-semibold text-center">Suggest an Orphanage</h1>
+            </CardHeader>
+            <CardBody className="p-6 space-y-6">
+              <p className="text-gray-700 text-center">
+                Help us extend our reach by suggesting an orphanage you know of.
+              </p>
+              <Input
+                placeholder="Enter the name of the orphanage"
+                startContent={<Home className="text-gray-600" />}
+                className="border rounded-md shadow-sm"
+              />
+              <Input
+                placeholder="Enter contact email"
+                type="email"
+                startContent={<Mail className="text-gray-600" />}
+                className="border rounded-md shadow-sm"
+              />
+              <Input
+                placeholder="Enter phone number"
+                type="tel"
+                startContent={<Phone className="text-gray-600" />}
+                className="border rounded-md shadow-sm"
+              />
+              <Textarea
+                placeholder="Enter full address"
+                startContent={<MapPin className="text-gray-600 mt-1" />}
+                className="border rounded-md shadow-sm"
+                minRows={4}
+              />
+              <div className="flex justify-center mt-6">
+                <Button
+                  color="primary"
+                  size="lg"
+                  className="w-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition duration-300"
+                >
+                  Submit Suggestion
                 </Button>
               </div>
-            </div>
-          </CardBody>
-        </Card>
+            </CardBody>
+          </Card>
+        </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default SugestOrphanagePage
+export default SuggestOrphanagePage;
