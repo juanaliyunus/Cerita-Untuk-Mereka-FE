@@ -55,7 +55,7 @@ const Navbar = () => {
   return (
     <div>
       <Helmet>
-        <title>Cerita Untuk Mereka</title>
+        <title>CeritaUntukMereka</title>
       </Helmet>
       <NextNavbar
         onMenuOpenChange={setIsMenuOpen}
@@ -73,22 +73,31 @@ const Navbar = () => {
               alt="Logo"
               className="w-10 h-10 rounded-full border-2 border-white"
             />
-            <p className="font-bold text-inherit ml-2">Cerita Untuk Mereka</p>
+            <p className="font-bold text-inherit ml-2">CeritaUntukMereka</p>
           </NavbarBrand>
         </NavbarContent>
 
         <NavbarContent className="hidden sm:flex gap-6 items-center" justify="center">
-          {menuItems.map((item, index) => (
-            <NavbarItem key={index}>
-              <Link
-                href={item === "Home" ? "/" : item === "Orphanage" ? "/donatur-orphanageList" : "/about"}
-                className="text-white hover:text-blue-200 transition-colors duration-300"
-              >
-                {item}
-              </Link>
-            </NavbarItem>
-          ))}
+          {menuItems
+            .filter((item) => isLoggedIn || item !== "Orphanage") // Filter item "Orphanage" jika belum login
+            .map((item, index) => (
+              <NavbarItem key={index}>
+                <Link
+                  href={
+                    item === "Home"
+                      ? "/"
+                      : item === "Orphanage"
+                      ? "/donatur-orphanageList"
+                      : "/about"
+                  }
+                  className="text-white hover:text-blue-200 transition-colors duration-300"
+                >
+                  {item}
+                </Link>
+              </NavbarItem>
+            ))}
         </NavbarContent>
+
 
         <NavbarContent justify="end" className="space-x-4">
           {isLoggedIn ? (
