@@ -3,7 +3,7 @@ import HomePage from "./pages/admin/HomePage";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/auth/AuthPage";
 import DonaturSignUp from "./pages/auth/DonaturSignUp";
-import OrphanageSignUp from "./pages/auth/OrphanagaseSignUp";
+import OrphanageSignUp from "./pages/auth/OrphanageSignUp";
 import HomePageOrphanage from "./pages/orphanage/HomePage";
 import OrphanagaseListPage from "./pages/donor/OrphanagaseListPage";
 import DonatePage from "./pages/donor/DonatePage";

@@ -22,36 +22,25 @@ const signupFormSchema = z.object({
     .string()
     .min(3)
     .max(20)
-    .refine((val) => !/\s/.test(val), {
-      message: "Username tidak boleh mengandung spasi",
-    })
-    .refine((val) => !/^[0-9]/.test(val), {
-      message: "Username tidak boleh dimulai dengan angka",
-    })
-    .refine((val) => !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val), {
-      message: "Username tidak boleh mengandung karakter khusus",
+    .regex(/^[^\s\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/, {
+      message: "Username tidak valid",
     }),
   password: z
     .string()
     .min(8)
     .max(20)
-    .refine((val) => /[A-Z]/.test(val), {
-      message: "Password harus mengandung minimal 1 huruf besar",
-    })
-    .refine((val) => /[a-z]/.test(val), {
-      message: "Password harus mengandung minimal 1 huruf kecil",
-    })
-    .refine((val) => /\d/.test(val), {
-      message: "Password harus mengandung minimal 1 angka",
-    })
-    .refine((val) => /[@$!%*?&]/.test(val), {
+    .regex(/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])/, {
       message:
-        "Password harus mengandung minimal 1 karakter khusus seperti @$!%*?&",
+        "Password harus mengandung minimal 1 huruf besar, huruf kecil, angka, dan karakter khusus",
     }),
   donor: z.object({
     email: z.string().email({ message: "Email tidak valid" }),
     address: z.string().max(100),
-    phone_number: z.string().min(10).max(13),
+    phone_number: z
+      .string()
+      .min(10)
+      .max(13)
+      .regex(/^\d+$/, { message: "Nomor telepon tidak valid" }),
     full_name: z.string().min(3).max(20),
   }),
 });
@@ -70,8 +59,8 @@ const DonaturSignUp = () => {
   const password = watch("password");
 
   useEffect(() => {
-    const passwordErrors = [];
     if (password) {
+      const passwordErrors = [];
       if (!/[A-Z]/.test(password))
         passwordErrors.push("Password harus mengandung minimal 1 huruf besar");
       if (!/[a-z]/.test(password))
@@ -80,32 +69,23 @@ const DonaturSignUp = () => {
         passwordErrors.push("Password harus mengandung minimal 1 angka");
       if (!/[@$!%*?&]/.test(password))
         passwordErrors.push(
-          "Password harus mengandung minimal 1 karakter khusus seperti @$!%*?&"
+          "Password harus mengandung minimal 1 karakter khusus"
         );
-    }
 
-    if (passwordErrors.length > 0) {
-      setError("password", {
-        type: "manual",
-        message: passwordErrors.join(", "),
-      });
-    } else {
-      clearErrors("password");
+      if (passwordErrors.length) {
+        setError("password", {
+          type: "manual",
+          message: passwordErrors.join(", "),
+        });
+      } else {
+        clearErrors("password");
+      }
     }
   }, [password, setError, clearErrors]);
 
   const onSubmit = async (data) => {
     try {
-      const response = await axiosInstance.post("/auth/register/donor", {
-        username: data.username,
-        password: data.password,
-        donor: {
-          email: data.donor.email,
-          address: data.donor.address,
-          phone_number: data.donor.phone_number,
-          full_name: data.donor.full_name,
-        },
-      });
+      const response = await axiosInstance.post("/auth/register/donor", data);
       if (response.status === 200 || response.status === 201) {
         toast.success("Pendaftaran berhasil");
         navigate("/login");
@@ -114,8 +94,9 @@ const DonaturSignUp = () => {
       }
     } catch (error) {
       console.error("Kesalahan saat pendaftaran:", error);
-      if (error.response) {
-        const errorData = error.response.data;
+      const errorData = error.response?.data;
+
+      if (errorData) {
         if (errorData.message === "Username already exists") {
           setError("username", {
             type: "manual",
@@ -127,12 +108,9 @@ const DonaturSignUp = () => {
             message: "Email sudah terdaftar",
           });
         } else {
-          const errorMessage =
-            errorData.message ||
-            errorData.error ||
-            error.response.statusText ||
-            "Terjadi kesalahan pada server";
-          toast.error(`Kesalahan pendaftaran: ${errorMessage}`);
+          toast.error(
+            `Kesalahan pendaftaran: ${errorData.message || "Terjadi kesalahan pada server"}`
+          );
         }
 
         if (errorData.errors) {
@@ -194,50 +172,51 @@ const DonaturSignUp = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-  <Helmet>
-    <title>Pendaftaran Donatur</title>
-  </Helmet>
-  <Link to="/" className="absolute top-5 left-5">
-    <img
-      src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
-      alt="kembali"
-      className="w-10 h-10"
-    />
-  </Link>
-  <Card className="w-full max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
-    <CardHeader className="flex flex-col items-center mb-4">
-      <img src={LogoBlack} alt="logo" className="w-16 h-16 mb-4" />
-      <h1 className="text-3xl font-bold text-gray-800">Pendaftaran Donatur</h1>
-    </CardHeader>
-    <Divider className="my-4" />
-    <CardBody>
-      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        {renderInput("username", "Username")}
-        {renderInput("donor.full_name", "Nama Lengkap")}
-        {renderInput("password", "Password", "password")}
-        {renderInput("donor.email", "Email", "email")}
-        {renderInput("donor.phone_number", "Nomor Telepon", "text", {
-          inputMode: "numeric",
-          pattern: "[0-9]*",
-          onInput: (e) => {
-            e.target.value = e.target.value.replace(/[^0-9]/g, "");
-          },
-        })}
-        {renderTextarea("donor.address", "Alamat")}
-        <Button type="submit" color="blue" className="w-full py-2">
-          Daftar
-        </Button>
-        <p className="text-center mt-4 text-gray-600">
-          Sudah punya akun?{" "}
-          <Link to="/login" className="text-blue-500 font-medium">
-            Masuk
-          </Link>
-        </p>
-      </form>
-    </CardBody>
-  </Card>
-</div>
-
+      <Helmet>
+        <title>Pendaftaran Donatur</title>
+      </Helmet>
+      <Link to="/" className="absolute top-5 left-5">
+        <img
+          src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
+          alt="kembali"
+          className="w-10 h-10"
+        />
+      </Link>
+      <Card className="w-full max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <CardHeader className="flex flex-col items-center mb-4">
+          <img src={LogoBlack} alt="logo" className="w-16 h-16 mb-4" />
+          <h1 className="text-3xl font-bold text-gray-800">
+            Pendaftaran Donatur
+          </h1>
+        </CardHeader>
+        <Divider className="my-4" />
+        <CardBody>
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            {renderInput("username", "Username")}
+            {renderInput("donor.full_name", "Nama Lengkap")}
+            {renderInput("password", "Password", "password")}
+            {renderInput("donor.email", "Email", "email")}
+            {renderInput("donor.phone_number", "Nomor Telepon", "text", {
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+              onInput: (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              },
+            })}
+            {renderTextarea("donor.address", "Alamat")}
+            <Button type="submit" color="blue" className="w-full py-2">
+              Daftar
+            </Button>
+            <p className="text-center mt-4 text-gray-600">
+              Sudah punya akun?{" "}
+              <Link to="/login" className="text-blue-500 font-medium">
+                Masuk
+              </Link>
+            </p>
+          </form>
+        </CardBody>
+      </Card>
+    </div>
   );
 };
 
