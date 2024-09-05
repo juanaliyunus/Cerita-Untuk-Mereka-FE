@@ -81,9 +81,10 @@ const AuthPage = () => {
         sessionStorage.setItem("token", token);
       }
 
+      console.log(user.role)
       if (user.role === "ROLE_DONOR") {
         navigate("/donatur-dashboard");
-      } else if (user.role === "ROLE_ORPHANAGE") {
+      } else if (user.role === "ROLE_ORPHANAGES") {
         navigate("/orphanage-dashboard");
       }
     } catch (error) {
