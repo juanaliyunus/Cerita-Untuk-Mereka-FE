@@ -162,6 +162,8 @@ const OrphanageSignUp = () => {
     console.log("Form submitted", data); // Logging submission data
     try {
       const response = await axiosInstance.post('/auth/register/orphanages', data);
+      console.log(response);
+      
       if ([200, 201].includes(response.status)) {
         toast.success("Pendaftaran berhasil");
         navigate("/login");
