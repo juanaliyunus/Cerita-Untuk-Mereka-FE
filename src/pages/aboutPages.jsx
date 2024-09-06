@@ -5,6 +5,7 @@ import Footer from '../component/Footer';
 import { motion } from 'framer-motion';
 
 const AboutPages = () => {
+    
     return (
         <>
             <Navbar />

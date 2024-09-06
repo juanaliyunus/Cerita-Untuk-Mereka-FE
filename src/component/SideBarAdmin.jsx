@@ -22,15 +22,13 @@ const SideBarAdmin=()=>{
                         <Sidebar.Item href="/admin-ListOrphanage" icon={GiThreeFriends}>
                             List Panti
                         </Sidebar.Item>
-                        <Sidebar.Item href="/admin-AddOrphanage" icon={CgAdd}>
+                        {/* <Sidebar.Item href="/admin-AddOrphanage" icon={CgAdd}>
                             Tambah Panti
-                        </Sidebar.Item>
+                        </Sidebar.Item> */}
                         <Sidebar.Item href="/admin-confirmBook" icon={GiConfirmed}>
                             Konfirmasi Buku
                         </Sidebar.Item>
-                        <Sidebar.Item href="/admin-VerificationOrphanage" icon={GiConfirmed}>
-                            Verifikasi Panti
-                        </Sidebar.Item>
+
                         <Sidebar.Item 
                             href="/" 
                             icon={BiLogOut}
