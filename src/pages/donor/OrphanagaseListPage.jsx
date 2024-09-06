@@ -7,7 +7,7 @@ function OrphanageListPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex-1 container mx-auto px-4 md:px-10 mt-10 flex flex-col">
+      <div className="flex-1 container mx-auto px-4 md:px-10 mt-10 flex flex-col ">
         <OrphanageList />
       </div>
       <Footer />
