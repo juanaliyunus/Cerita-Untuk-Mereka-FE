@@ -19,6 +19,7 @@ import ListUsers from "./pages/admin/ListUsers";
 import ListOrphanages from "./pages/admin/ListOrphanages";
 import AddOrphanages from "./pages/admin/AddOrphanages";
 import ConfirmBooks from "./pages/admin/ConfirmBooks";
+import HistoryDonationOrphanage from "./pages/orphanage/HistoryDonationOrphanage";
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
         <Route path="/orphanage-confirmBook" element={<ConfirmBook />} />
         <Route path="/orphanage-profile" element={<ProfileOrphanage />} />
         <Route path="/orphanage-sugest" element={<SugestOrphanagePage />} />
+        <Route path="/history-donation-orphanage" element ={<HistoryDonationOrphanage/>}/>
         <Route path="/donatur-checkDonation" element={<CheckDonation />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

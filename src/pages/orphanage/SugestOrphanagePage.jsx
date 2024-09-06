@@ -1,7 +1,7 @@
-import SideBar from '../../component/SideBar';
-import { Card, CardBody, CardHeader, Input, Button, Textarea } from '@nextui-org/react';
-import { Label } from 'flowbite-react';
-import { Home, Mail, Phone, MapPin } from 'lucide-react';
+import React from 'react'
+import SideBar from '../../component/SideBar'
+import { Card, CardBody, CardHeader } from '@nextui-org/react'
+import { Button, Label, TextInput } from 'flowbite-react'
 
 function SuggestOrphanagePage() {
   return (
