@@ -1,5 +1,5 @@
-import { Card, CardBody, CardHeader, Image } from "@nextui-org/react";
-import { Button, Label, Modal, ModalBody, ModalFooter, ModalHeader, TextInput } from "flowbite-react";
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import SideBar from "../../component/SideBar";
@@ -9,6 +9,7 @@ function ProfileOrphanage() {
   const [isEditing, setIsEditing] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [avatar, setAvatar] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState(""); // New state for preview
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -49,12 +50,13 @@ function ProfileOrphanage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, []); // Empty dependency array to run once on mount
 
   const handleAvatarChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       setIsAvatarChanged(true);
+      setAvatarPreview(URL.createObjectURL(file)); // Set preview image
       const formData = new FormData();
       const fileName = file.name.replace(/\s+/g, "_");
       const renamedFile = new File([file], fileName, { type: file.type });
@@ -100,16 +102,17 @@ function ProfileOrphanage() {
 
     try {
       if (isAvatarChanged) {
-        await handleAvatarChange({ target: { files: [avatar] } });
+        // Avatar already uploaded, no need to call handleAvatarChange here
+        formData.append("avatar", avatarFileName);
       }
       await axiosInstance.put(url, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
-      setIsEditing(false);
-      fetchData();
+      setIsEditing(false); // Reset editing mode
+      fetchData(); // Update the displayed data immediately after save
     } catch (error) {
       console.error("Failed to save profile:", error.response?.data || "Network error or server is down");
     }
@@ -142,102 +145,99 @@ function ProfileOrphanage() {
   };
 
   return (
-<div className="flex h-screen bg-gray-100">
-  <SideBar />
-  <div className="flex-grow p-8 flex flex-col items-center">
-    <Card className="shadow-lg rounded-lg bg-white p-8 w-full max-w-4xl">
-      <CardHeader>
-        <h1 className="text-3xl font-semibold text-gray-800 mb-6">Edit Profile</h1>
-      </CardHeader>
-      <CardBody>
-        <div className="flex justify-center mb-6">
-          <img
-            src={
-              avatar
-                ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`
-                : 'path/to/default/avatar.png'
-            }
-            alt="Avatar"
-            className="w-32 h-32 rounded-full border-4 border-blue-500"
-          />
-        </div>
-        <form className="space-y-6" encType="multipart/form-data">
-          <input
-            type="file"
-            name="avatar"
-            onChange={handleAvatarChange}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-lg file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 transition duration-150"
-            disabled={!isEditing}
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { label: 'Nama Panti', name: 'name', type: 'text', value: name },
-              { label: 'Email', name: 'email', type: 'email', value: email },
-              { label: 'Nomor Telepon', name: 'phone', type: 'text', value: phone },
-              { label: 'Alamat', name: 'address', type: 'text', value: address },
-              { label: 'Deskripsi', name: 'description', type: 'text', value: description },
-              { label: 'Website', name: 'website', type: 'text', value: website },
-            ].map(({ label, name, type, value }) => (
-              <div key={name} className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700">{label}</label>
-                <input
-                  type={type}
-                  name={name}
-                  value={value}
-                  onChange={handleChange}
-                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={!isEditing}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-end mt-8">
-            <Button
-              className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150"
-              onClick={() => {
-                if (isEditing) {
-                  setOpenModal(true);
-                } else {
-                  setIsEditing(true);
+    <div className="flex h-screen bg-gray-100">
+      <SideBar />
+      <div className="flex-grow p-8 flex flex-col items-center">
+        <Card className="shadow-lg rounded-lg bg-white p-8 w-full max-w-4xl">
+          <CardHeader>
+            <h1 className="text-3xl font-semibold text-gray-800 mb-6">Edit Profile</h1>
+          </CardHeader>
+          <CardBody>
+            <div className="flex justify-center mb-6">
+              <img
+                src={
+                  avatarPreview || // Display preview if available
+                  (avatar
+                    ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`
+                    : 'path/to/default/avatar.png')
                 }
-              }}
-            >
-              {isEditing ? 'Save' : 'Edit'}
-            </Button>
-          </div>
-          <Modal open={openModal} onClose={() => setOpenModal(false)} className="p-6 bg-white shadow-lg rounded-lg">
-            <ModalHeader>
-              <h2 className="text-xl font-semibold text-gray-800">Save Profile</h2>
-            </ModalHeader>
-            <ModalBody>
-              <p className="text-lg text-gray-700">Are you sure you want to save the profile?</p>
-            </ModalBody>
-            <ModalFooter className="flex justify-end gap-4">
-              <Button
-                color="primary"
-                onClick={() => {
-                  handleSave();
-                  setOpenModal(false);
-                }}
-                className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"
-              >
-                Save
-              </Button>
-              <Button
-                color="gray"
-                onClick={() => setOpenModal(false)}
-                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300"
-              >
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Modal>
-        </form>
-      </CardBody>
-    </Card>
-  </div>
-</div>
-
+                alt="Avatar"
+                className="w-32 h-32 rounded-full border-4 border-blue-500"
+              />
+            </div>
+            <form className="space-y-6" encType="multipart/form-data">
+              <input
+                type="file"
+                name="avatar"
+                onChange={handleAvatarChange}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-lg file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 transition duration-150"
+                disabled={!isEditing}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  { label: 'Nama Panti', name: 'name', type: 'text', value: name },
+                  { label: 'Email', name: 'email', type: 'email', value: email },
+                  { label: 'Nomor Telepon', name: 'phone', type: 'text', value: phone },
+                  { label: 'Alamat', name: 'address', type: 'text', value: address },
+                  { label: 'Deskripsi', name: 'description', type: 'text', value: description },
+                  { label: 'Website', name: 'website', type: 'text', value: website },
+                ].map(({ label, name, type, value }) => (
+                  <div key={name} className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-700">{label}</label>
+                    <input
+                      type={type}
+                      name={name}
+                      value={value}
+                      onChange={handleChange}
+                      className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={!isEditing}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-end mt-8">
+                <Button
+                  className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150"
+                  onClick={() => {
+                    if (isEditing) {
+                      setOpenModal(true);
+                    } else {
+                      setIsEditing(true);
+                    }
+                  }}
+                >
+                  {isEditing ? 'Save' : 'Edit'}
+                </Button>
+              </div>
+              <Modal open={openModal} onClose={() => setOpenModal(false)} className="p-6 bg-white shadow-lg rounded-lg">
+                <ModalHeader>
+                  <h2 className="text-xl font-semibold text-gray-800">Konfirmasi Simpan</h2>
+                </ModalHeader>
+                <ModalBody>
+                  <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="gray"
+                    onClick={() => setOpenModal(false)}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleSave();
+                      setOpenModal(false);
+                    }}
+                  >
+                    Simpan
+                  </Button>
+                </ModalFooter>
+              </Modal>
+            </form>
+          </CardBody>
+        </Card>
+      </div>
+    </div>
   );
 }
 

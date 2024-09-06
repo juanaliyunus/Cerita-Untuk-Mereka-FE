@@ -27,6 +27,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/admin" element={<HomePage />} />
         <Route path="/admin-dashboard" element={<HomePage />} />
         <Route path="/admin-ListUsers" element={<ListUsers />} />
         <Route path="/admin-ListOrphanage" element={<ListOrphanages />} />

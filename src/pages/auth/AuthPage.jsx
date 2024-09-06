@@ -32,6 +32,8 @@ const AuthPage = () => {
         navigate("/donatur-dashboard");
       } else if (user.role === "ROLE_ORPHANAGE") {
         navigate("/orphanage-dashboard");
+      } else if (user.role === "ROLE_ADMIN") {
+        navigate("/admin");
       }
     }
   }, [navigate]);
@@ -85,6 +87,8 @@ const AuthPage = () => {
         navigate("/donatur-dashboard");
       } else if (user.role === "ROLE_ORPHANAGES") {
         navigate("/orphanage-dashboard");
+      } else if (user.role === "ROLE_ADMIN") {
+        navigate("/admin");
       }
     } catch (error) {
       console.error("Login error:", error);
