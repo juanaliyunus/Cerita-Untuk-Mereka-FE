@@ -12,42 +12,75 @@ function ConfirmBooks() {
     body: "",
     onConfirm: () => {},
   });
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0); // Page starts from 0
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+ const formatDate = (millis) => {
+    const date = new Date(millis); // Gunakan millis langsung
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // months are 0-indexed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const fetchData = async () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(`/donations?page=${currentPage}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const booksData = response.data.data.data || [];
+
+      // Fetch fullname dan orphanage name
+      const updatedBooks = await Promise.all(
+        booksData.map(async (book) => {
+          const userResponse = await axiosInstance.get(`/donors/user/${book.user_id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const orphanageResponse = await axiosInstance.get(`/orphanages/${book.orphanages_id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          return {
+            ...book,
+            fullname: userResponse.data.data.fullname,
+            orphanage_name: orphanageResponse.data.data.name,
+            created_at: formatDate(book.created_at), // Format tanggal
+          };
+        })
+      );
+
+      setBooks(updatedBooks);
+      setHasMore(booksData.length > 0); // Check if there are more data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setBooks([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
-      try {
-        const response = await axiosInstance.get(`/donations?page=0`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (Array.isArray(response.data.data.data)) {
-          setBooks(response.data.data.data);
-          console.log("setBooks", response.data.data.data);
-        } else {
-          setBooks([]);
-          console.log("setBooks Else", response.data.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setBooks([]);
-      }
-    };
-
     fetchData();
-  }, []);
+  }, [currentPage]); // Trigger fetchData when currentPage changes
 
   const handleStatusChange = async (id, newStatus) => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     try {
       const data = { status: newStatus };
-      console.log("Sending data to backend:", data.status.replace(/['"]/g, '')); 
-      await axiosInstance.put(`/donations/${id}`, data.status.replace(/['"\/\\]/g, ''), { 
+      await axiosInstance.put(`/donations/${id}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       setBooks((prevBooks) =>
@@ -55,8 +88,7 @@ function ConfirmBooks() {
           book.id === id ? { ...book, status: newStatus } : book
         )
       );
-      console.log("Updated status to:", newStatus);
-      closeModal(); // Pastikan closeModal dipanggil setelah status diupdate
+      closeModal();
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -84,6 +116,18 @@ function ConfirmBooks() {
     });
   };
 
+  const handleNextPage = () => {
+    if (hasMore) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
   return (
     <div className="flex">
       <SideBarAdmin />
@@ -96,10 +140,11 @@ function ConfirmBooks() {
               <thead>
                 <tr className="text-center">
                   <th>Book Name</th>
-                  <th>Orphanages ID</th>
-                  <th>User ID</th>
+                  <th>Orphanage Name</th>
+                  <th>User Fullname</th>
                   <th>Quantity</th>
                   <th>Status</th>
+                  <th>Date</th> {/* Tambahkan kolom Date */}
                   <th>Action</th>
                 </tr>
               </thead>
@@ -107,18 +152,36 @@ function ConfirmBooks() {
                 {books.map((book, index) => (
                   <tr key={index}>
                     <td className="text-start">{book.book_name}</td>
-                    <td>{book.orphanages_id}</td>
-                    <td>{book.user_id}</td>
+                    <td>{book.orphanage_name}</td>
+                    <td>{book.fullname}</td>
                     <td>{book.quantity_donated}</td>
-                    <td>{book.status.replace(/['"]/g, '')}</td>
+                    <td>{book.status}</td>
+                    <td>{book.created_at}</td> {/* Tampilkan tanggal donasi */}
                     <td className="flex justify-center space-x-2">
-                        <Button color="success" onClick={() => handleApprove(book.id)}>Approve</Button>
-                        <Button color="failure" onClick={() => handleReject(book.id)}>Reject</Button>
+                      <Button color="success" onClick={() => handleApprove(book.id)}>Approve</Button>
+                      <Button color="failure" onClick={() => handleReject(book.id)}>Reject</Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
+            <div className="flex justify-between items-center mt-4">
+              <Button
+                color="gray"
+                onClick={handlePreviousPage}
+                disabled={currentPage === 0} // Disable if on the first page
+              >
+                &larr; Previous
+              </Button>
+              <p>Page {currentPage + 1}</p>
+              <Button
+                color="gray"
+                onClick={handleNextPage}
+                disabled={!hasMore} // Disable if there is no more data
+              >
+                Next &rarr;
+              </Button>
+            </div>
           </CardBody>
         </Card>
       </div>

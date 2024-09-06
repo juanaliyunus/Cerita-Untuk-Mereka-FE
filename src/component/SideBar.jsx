@@ -53,13 +53,7 @@ console.log(avatar);
               alt="Profile"
               className="w-24 h-24 rounded-full border-4 border-blue-500 mb-4"
             />
-            <h1 className="text-lg font-bold">User Name</h1> {/* Nama user dapat ditambahkan */}
           </div>
-
-          <h1 className="text-2xl font-bold text-center justify-center items-center mb-6">
-            Dashboard
-          </h1>
-
           <Sidebar.ItemGroup>
             <Sidebar.Item href="/orphanage-dashboard" icon={HiChartPie}>
               Dashboard

@@ -32,6 +32,7 @@ function App() {
         <Route path="/admin-ListOrphanage" element={<ListOrphanages />} />
         <Route path="/admin-AddOrphanage" element={<AddOrphanages />} />
         <Route path="/admin-confirmBook" element={<ConfirmBooks />} />
+        <Route path="/admin-dashboard" element={<HomePage />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/donatur-signup" element={<DonaturSignUp />} />
         <Route path="/donatur-dashboard" element={<LandingPage />} />
