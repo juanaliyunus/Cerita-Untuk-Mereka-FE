@@ -12,7 +12,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-100 to-white">
       <Navbar className="relative z-20" />
 
       {/* Hero Section with Animated Background */}

@@ -28,9 +28,7 @@ const SideBarAdmin=()=>{
                         <Sidebar.Item href="/admin-confirmBook" icon={GiConfirmed}>
                             Konfirmasi Buku
                         </Sidebar.Item>
-                        {/* <Sidebar.Item href="/admin-VerificationOrphanage" icon={GiConfirmed}>
-                            Verifikasi Panti
-                        </Sidebar.Item> */}
+
                         <Sidebar.Item 
                             href="/" 
                             icon={BiLogOut}
