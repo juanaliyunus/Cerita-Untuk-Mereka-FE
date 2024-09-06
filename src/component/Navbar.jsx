@@ -60,7 +60,7 @@ const Navbar = () => {
       <NextNavbar
         onMenuOpenChange={setIsMenuOpen}
         position="fixed"
-        className="bg-gradient-to-r from-blue-500 to-teal-400 text-white shadow-lg"
+        className="bg-gradient-to-r from-blue-300 to-teal-400 text-white shadow-lg"
       >
         <NavbarContent className="px-4">
           <NavbarMenuToggle
@@ -115,7 +115,7 @@ const Navbar = () => {
               style={{ zIndex: 1050, position: "relative" }}
             >
               <DropdownItem>
-                <Link href="/donatur-profile" className="hover:text-blue-500 transition duration-200">
+                <Link href="/donatur-profile" className="hover:text-white transition duration-200">
                   Profile
                 </Link>
               </DropdownItem>
@@ -136,10 +136,7 @@ const Navbar = () => {
           ) : (
             <>
               <Button as={Link} color="primary" href="/login" variant="flat" className="hover:bg-blue-700">
-                Sign In
-              </Button>
-              <Button as={Link} color="secondary" href="/register" variant="flat" className="hover:bg-teal-600">
-                Register
+                Login
               </Button>
             </>
           )}

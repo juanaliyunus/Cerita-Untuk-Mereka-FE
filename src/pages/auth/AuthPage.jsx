@@ -80,10 +80,10 @@ const AuthPage = () => {
       } else {
         sessionStorage.setItem("token", token);
       }
-
+      console.log(user.role);
       if (user.role === "ROLE_DONOR") {
         navigate("/donatur-dashboard");
-      } else if (user.role === "ROLE_ORPHANAGE") {
+      } else if (user.role === "ROLE_ORPHANAGES") {
         navigate("/orphanage-dashboard");
       }
     } catch (error) {
@@ -173,7 +173,7 @@ const AuthPage = () => {
                 type="submit"
                 className="w-full bg-gradient-to-r  from-blue-300 to-blue-500 text-white py-2 rounded-full"
               >
-                Sign In
+                Login
               </Button>
             </form>
             <div className="flex justify-center mt-6">

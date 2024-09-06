@@ -237,38 +237,49 @@ const OrphanageSignUp = () => {
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 flex justify-center items-center p-4">
-    <Helmet>
-      <title>Pendaftaran Panti Asuhan</title>
-    </Helmet>
+<div className="min-h-screen flex items-center justify-center bg-[#E0F7FA]">
+  <Helmet>
+    <title>Orphanage Register</title>
+  </Helmet>
+  <div className="bg-white shadow-lg rounded-lg flex flex-col md:flex-row max-w-5xl w-full overflow-hidden">
+    {/* Left Side with Logo and Text */}
     <Link to="/" className="absolute top-5 left-5">
       <img
         src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
         alt="Kembali"
-        className="w-12 h-12 transition-transform transform hover:scale-110"
+        className="w-10 h-10"
       />
     </Link>
-    <Card className="w-full max-w-md md:max-w-lg mx-auto bg-white p-6 md:p-8 rounded-lg shadow-md">
-      <CardHeader className="flex flex-col items-center mb-4 md:mb-6">
-        <img src={LogoBlack} alt="Logo" className="w-16 h-16 md:w-20 md:h-20 mb-3 md:mb-4" />
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 text-center">
-          Daftar Panti Asuhan
-        </h1>
-      </CardHeader>
-      <Divider className="my-4 md:my-6" />
-      <CardBody>
-        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          {renderInput("username", "Username")}
-          {renderInput("password", "Password", "password")}
+    <div className="hidden md:flex w-full md:w-1/3 bg-gradient-to-r from-blue-500 to-blue-400 items-center justify-center p-12">
+      <div className="text-white text-center">
+        <h2 className="text-5xl font-bold">CeritaUntuk Mereka</h2>
+      </div>
+    </div>
+
+    {/* Right Side with Form */}
+    <div className="w-full md:w-2/3 p-8 relative">
+      <h1 className="text-4xl font-bold mb-4 text-gray-800">Orphanage Register</h1>
+      <p className="text-gray-600 mb-8">
+        Create an account and start receiving book donations to support your orphanage.
+      </p>
+      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-6">
           {renderInput("orphanages.name", "Nama Panti Asuhan")}
-          {renderInput("orphanages.email", "Email", "email")}
-          {renderInput("orphanages.phone_number", "Nomor Telepon", "tel", {
-            inputMode: "numeric",
-            pattern: "[0-9]*",
-            onInput: (e) => {
-              e.target.value = e.target.value.replace(/[^0-9]/g, "");
-            },
-          })}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderInput("username", "Username")}
+            {renderInput("password", "Password", "password")}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderInput("orphanages.email", "Email", "email")}
+            {renderInput("orphanages.phone_number", "Nomor Telepon", "tel", {
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+              onInput: (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              },
+            })}
+          </div>
           {renderTextarea("orphanages.address", "Alamat")}
           {renderTextarea("orphanages.description", "Deskripsi")}
           {renderInput(
@@ -276,27 +287,29 @@ const OrphanageSignUp = () => {
             "URL Website (isi dengan - jika tidak ada)",
             "url"
           )}
+        </div>
+
+        <div className="flex items-center justify-between mt-6">
           <Button
             type="submit"
-            color="primary"
-            variant="contained"
-            className="w-full py-2 md:py-3 text-base md:text-lg"
+            color="blue"
+            className="px-6 py-2 border border-blue-500 rounded-md bg-blue-500 text-white hover:bg-blue-600 transition duration-300"
           >
-            Daftar
+            Submit
           </Button>
-          <p className="text-center mt-4 md:mt-6 text-gray-700">
-            Sudah punya akun?{" "}
-            <Link
-              to="/login"
-              className="text-blue-600 font-medium hover:underline"
-            >
-              Masuk
-            </Link>
-          </p>
-        </form>
-      </CardBody>
-    </Card>
+          <Link
+            to="/login"
+            className="text-blue-600 hover:text-blue-800 transition duration-300"
+          >
+            Login
+          </Link>
+        </div>
+      </form>
+    </div>
   </div>
+</div>
+
+  
   
 
   );
