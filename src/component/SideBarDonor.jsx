@@ -3,8 +3,8 @@ import { HiHome, HiUserCircle } from "react-icons/hi2";
 
 const SideBarDonor = () => {
   return (
-    <div className="flex h-screen bg-gray-100">
-      <aside className="w-64 bg-gradient-to-b from-[#4e7a94] to-[#2f4b60] text-white shadow-lg">
+    <div className="flex h-screen bg-white">
+      <aside className="w-64 bg-white text-gray-800 shadow-lg">
         <div className="p-6">
           <h1 className="text-3xl font-bold text-center mb-8 tracking-wide">
             Dashboard
@@ -14,34 +14,34 @@ const SideBarDonor = () => {
               <li>
                 <a
                   href="/donatur-dashboard"
-                  className="flex items-center py-3 px-4 rounded-lg hover:bg-[#3b546a] transition duration-300"
+                  className="flex items-center py-3 px-4 rounded-lg hover:bg-gray-100 transition duration-300"
                 >
-                  <HiHome className="mr-3 text-2xl" />
+                  <HiHome className="mr-3 text-2xl text-gray-600" />
                   <span className="text-lg font-medium">Home</span>
                 </a>
               </li>
               <li>
                 <a
                   href="/donatur-profile"
-                  className="flex items-center py-3 px-4 rounded-lg hover:bg-[#3b546a] transition duration-300"
+                  className="flex items-center py-3 px-4 rounded-lg hover:bg-gray-100 transition duration-300"
                 >
-                  <HiUserCircle className="mr-3 text-2xl" />
+                  <HiUserCircle className="mr-3 text-2xl text-gray-600" />
                   <span className="text-lg font-medium">Profile</span>
                 </a>
               </li>
               <li>
                 <a
                   href="/donatur-checkDonation"
-                  className="flex items-center py-3 px-4 rounded-lg hover:bg-[#3b546a] transition duration-300"
+                  className="flex items-center py-3 px-4 rounded-lg hover:bg-gray-100 transition duration-300"
                 >
-                  <BiBookAdd className="mr-3 text-2xl" />
+                  <BiBookAdd className="mr-3 text-2xl text-gray-600" />
                   <span className="text-lg font-medium">Check Donation</span>
                 </a>
               </li>
               <li className="mt-8">
                 <a
                   href="/"
-                  className="flex items-center py-3 px-4 rounded-lg text-red-400 hover:bg-red-600 hover:text-white transition duration-300"
+                  className="flex items-center py-3 px-4 rounded-lg text-red-500 hover:bg-red-100 transition duration-300"
                   onClick={() => {
                     localStorage.removeItem("token");
                     sessionStorage.removeItem("token");

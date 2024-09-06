@@ -8,44 +8,44 @@ const AboutPages = () => {
     return (
         <>
             <Navbar />
-            <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen flex items-center justify-center py-8">
+            <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen flex items-center justify-center py-12">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
-                    className="container mx-auto p-4 md:p-8"
+                    transition={{ duration: 1.2 }}
+                    className="container mx-auto px-4 md:px-8"
                 >
-                    <Card className="p-6 md:p-8 bg-[#E0F7FA] border border-gray-200 shadow-lg rounded-lg">
-                        <h1 className="text-4xl font-bold text-center text-blue-800 mb-6">
-                            Tentang Kami
+                    <Card className="p-8 bg-white border border-gray-200 shadow-lg rounded-lg max-w-4xl mx-auto">
+                        <h1 className="text-5xl font-extrabold text-center text-blue-900 mb-8">
+                            About Us
                         </h1>
-                        <p className="text-lg text-gray-700 mb-6">
-                            Selamat datang di <strong>CeritaUntukMereka</strong>, aplikasi yang berkomitmen untuk 
-                            membantu anak-anak di panti asuhan melalui donasi buku. Kami percaya bahwa buku adalah 
-                            kunci untuk membuka dunia imajinasi dan pembelajaran.
+                        <p className="text-xl text-gray-800 mb-8">
+                            Welcome to <strong className="text-blue-600">CeritaUntukMereka</strong>, an app dedicated to 
+                            supporting children in orphanages through book donations. We believe that books are the 
+                            key to unlocking a world of imagination and learning.
                         </p>
-                        <h2 className="text-2xl font-semibold mb-4 text-blue-600">
-                            Misi Kami
+                        <h2 className="text-3xl font-semibold mb-5 text-blue-700">
+                            Our Mission
                         </h2>
-                        <p className="text-gray-700 mb-6">
-                            Misi kami adalah menyediakan akses buku berkualitas tinggi untuk anak-anak di panti asuhan. 
-                            Kami bertujuan untuk memberikan kesempatan yang sama kepada setiap anak untuk belajar dan tumbuh.
+                        <p className="text-gray-800 mb-8">
+                            Our mission is to provide access to high-quality books for children in orphanages. 
+                            We aim to give every child an equal opportunity to learn and grow.
                         </p>
-                        <h2 className="text-2xl font-semibold mb-4 text-blue-600">
-                            Visi Kami
+                        <h2 className="text-3xl font-semibold mb-5 text-blue-700">
+                            Our Vision
                         </h2>
-                        <p className="text-gray-700 mb-6">
-                            Visi kami adalah menciptakan dunia di mana setiap anak memiliki akses ke buku yang dapat 
-                            membentuk masa depan mereka. Kami ingin menjadi penggerak perubahan dalam akses pendidikan di 
-                            komunitas yang membutuhkan.
+                        <p className="text-gray-800 mb-8">
+                            Our vision is to create a world where every child has access to books that can shape 
+                            their future. We aspire to be a catalyst for change in educational access within 
+                            underserved communities.
                         </p>
-                        <h2 className="text-2xl font-semibold mb-4 text-blue-600">
-                            Tim Kami
+                        <h2 className="text-3xl font-semibold mb-5 text-blue-700">
+                            Our Team
                         </h2>
-                        <p className="text-gray-700">
-                            Tim kami terdiri dari individu yang bersemangat dan berkomitmen untuk mengubah dunia melalui 
-                            pendidikan. Kami bekerja sama dengan berbagai organisasi untuk memastikan bahwa donasi buku 
-                            sampai ke tangan anak-anak yang membutuhkannya.
+                        <p className="text-gray-800">
+                            Our team consists of passionate and dedicated individuals committed to changing the world 
+                            through education. We collaborate with various organizations to ensure that book donations 
+                            reach the children who need them most.
                         </p>
                     </Card>
                 </motion.div>

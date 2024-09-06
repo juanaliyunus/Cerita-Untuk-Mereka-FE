@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
@@ -171,51 +171,69 @@ const DonaturSignUp = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+    <div className="min-h-screen flex items-center justify-center bg-[#E0F7FA]">
       <Helmet>
-        <title>Pendaftaran Donatur</title>
+        <title>Donor Register</title>
       </Helmet>
-      <Link to="/" className="absolute top-5 left-5">
-        <img
-          src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
-          alt="kembali"
-          className="w-10 h-10"
-        />
-      </Link>
-      <Card className="w-full max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <CardHeader className="flex flex-col items-center mb-4">
-          <img src={LogoBlack} alt="logo" className="w-16 h-16 mb-4" />
-          <h1 className="text-3xl font-bold text-gray-800">
-            Pendaftaran Donatur
-          </h1>
-        </CardHeader>
-        <Divider className="my-4" />
-        <CardBody>
-          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            {renderInput("username", "Username")}
-            {renderInput("donor.full_name", "Nama Lengkap")}
-            {renderInput("password", "Password", "password")}
-            {renderInput("donor.email", "Email", "email")}
-            {renderInput("donor.phone_number", "Nomor Telepon", "text", {
-              inputMode: "numeric",
-              pattern: "[0-9]*",
-              onInput: (e) => {
-                e.target.value = e.target.value.replace(/[^0-9]/g, "");
-              },
-            })}
-            {renderTextarea("donor.address", "Alamat")}
-            <Button type="submit" color="blue" className="w-full py-2">
-              Daftar
-            </Button>
-            <p className="text-center mt-4 text-gray-600">
-              Sudah punya akun?{" "}
-              <Link to="/login" className="text-blue-500 font-medium">
-                Masuk
+      <div className="bg-white shadow-lg rounded-lg flex flex-col md:flex-row max-w-5xl w-full overflow-hidden">
+        {/* Left Side with Logo and Text */}
+        <Link to="/" className="absolute top-5 left-5">
+          <img
+            src="https://img.icons8.com/?size=100&id=jqVLTIkbz7hy&format=png&color=228BE6"
+            alt="kembali"
+            className="w-10 h-10"
+          />
+        </Link>
+        <div className="hidden md:flex w-full md:w-1/3 bg-gradient-to-r from-blue-500 to-blue-400 items-center justify-center p-12">
+          <div className="text-white text-center">
+            <h2 className="text-5xl font-bold">CeritaUntuk Mereka</h2>
+          </div>
+        </div>
+
+        {/* Right Side with Form */}
+        <div className="w-full md:w-2/3 p-8 relative">
+          <h1 className="text-4xl font-bold mb-4 text-gray-800">Donor Register</h1>
+          <p className="text-gray-600 mb-8">
+            Create an account and start donating books to orphanages in need.
+          </p>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-6">
+              {renderInput("donor.full_name", "Nama Lengkap")}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {renderInput("username", "Username")}
+                {renderInput("password", "Password", "password")}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {renderInput("donor.email", "Email", "email")}
+                {renderInput("donor.phone_number", "Nomor Telepon", "tel", {
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  onInput: (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                  },
+                })}
+              </div>
+              {renderTextarea("donor.address", "Alamat")}
+            </div>
+
+            <div className="flex items-center justify-between mt-6">
+              <Button
+                type="submit"
+                color="blue"
+                className="px-6 py-3 border border-blue-500 rounded-md bg-blue-500 text-white hover:bg-blue-600 transition duration-300"
+              >
+                Submit
+              </Button>
+              <Link
+                to="/login"
+                className="text-blue-600 hover:text-blue-800 transition duration-300"
+              >
+                Login
               </Link>
-            </p>
+            </div>
           </form>
-        </CardBody>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

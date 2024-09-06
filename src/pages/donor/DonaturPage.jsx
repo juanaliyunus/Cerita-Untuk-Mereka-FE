@@ -5,10 +5,10 @@ import Profile from '../../component/Profile'
 function DonaturPage() {
   return (
       <div className="flex h-screen">
-          <SideBarDonor className="w-64 bg-gray-800 text-white shadow-lg" />
-          <div className="flex-1 p-6 bg-gray-100">
-              <Profile />
-          </div>
+          <SideBarDonor className="w-64 text-white shadow-lg" />
+            <div className="flex-1 p-6 bg-[#E0F7FA]">
+                <Profile />
+            </div>
       </div>
 
   )
