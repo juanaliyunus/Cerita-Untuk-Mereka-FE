@@ -59,7 +59,10 @@ function ConfirmBooks() {
         })
       );
 
-      setBooks(updatedBooks);
+      // Filter out books with status 'delivered'
+      const filteredBooks = updatedBooks.filter(book => book.status !== 'delivered');
+
+      setBooks(filteredBooks);
       setHasMore(booksData.length > 0); // Check if there are more data
     } catch (error) {
       console.error("Error fetching data:", error);
