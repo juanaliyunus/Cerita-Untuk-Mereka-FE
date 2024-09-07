@@ -78,7 +78,7 @@ function HistoryDonationOrphanage() {
     const token =
       sessionStorage.getItem("token") || localStorage.getItem("token");
 
-    const url = `/donors/${userId}`;
+    const url = `/donors/user/${userId}`;
 
     try {
       const response = await axiosInstance.get(url, {
@@ -87,10 +87,13 @@ function HistoryDonationOrphanage() {
         },
       });
       const fullname = response.data.data.fullname;
+      console.log("fullname"+fullname);
       setDonorNames((prevNames) => ({
         ...prevNames,
         [userId]: fullname,
       }));
+     
+      
     } catch (error) {
       if (error.response) {
         console.error("Failed to fetch donor name", error.response.data);

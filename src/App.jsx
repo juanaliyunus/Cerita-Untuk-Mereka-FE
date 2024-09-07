@@ -17,7 +17,6 @@ import SugestOrphanagePage from "./pages/orphanage/SugestOrphanagePage";
 import CheckDonation from "./pages/donor/CheckDonation";
 import ListUsers from "./pages/admin/ListUsers";
 import ListOrphanages from "./pages/admin/ListOrphanages";
-// import AddOrphanages from "./pages/admin/AddOrphanages";
 import ConfirmBooks from "./pages/admin/ConfirmBooks";
 import HistoryDonationOrphanage from "./pages/orphanage/HistoryDonationOrphanage";
 
@@ -27,10 +26,10 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/admin" element={<HomePage />} />
         <Route path="/admin-dashboard" element={<HomePage />} />
         <Route path="/admin-ListUsers" element={<ListUsers />} />
         <Route path="/admin-ListOrphanage" element={<ListOrphanages />} />
-        {/* <Route path="/admin-AddOrphanage" element={<AddOrphanages />} /> */}
         <Route path="/admin-confirmBook" element={<ConfirmBooks />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/donatur-signup" element={<DonaturSignUp />} />

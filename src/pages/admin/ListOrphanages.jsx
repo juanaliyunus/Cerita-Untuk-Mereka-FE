@@ -134,154 +134,155 @@ function ListOrphanages() {
   };
 
   return (
-    <>
-      <div className="flex h-screen">
-        <SideBarAdmin />
-        <div className="flex-grow flex-wrap p-4">
-          <Card className="mb-6">
-            <CardHeader>
-              <h1 className="text-2xl font-bold">List Orphanages</h1>
-            </CardHeader>
-            <CardBody>
-              <Table className="mb-6">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th onClick={handleSort} style={{ cursor: "pointer" }}>
-                      Name {sortOrder === "asc" ? "↑" : "↓"}
-                    </th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Action</th>
+<>
+  <div className="flex h-screen bg-gray-100">
+    <SideBarAdmin />
+    <div className="flex-grow flex-wrap p-6">
+      <Card className="mb-8 bg-white shadow-lg rounded-lg">
+        <CardHeader className="border-b p-4">
+          <h1 className="text-3xl font-semibold text-gray-800">List Orphanages</h1>
+        </CardHeader>
+        <CardBody className="p-6">
+          <Table className="mb-6 w-full">
+            <thead className="bg-gray-50 border-b-2 border-gray-200">
+              <tr className="text-left">
+                <th 
+                  onClick={handleSort} 
+                  className="py-2 px-4 font-medium text-gray-700 cursor-pointer hover:text-gray-900 transition"
+                >
+                  Name {sortOrder === "asc" ? "↑" : "↓"}
+                </th>
+                <th className="py-2 px-4 font-medium text-gray-700">Email</th>
+                <th className="py-2 px-4 font-medium text-gray-700">Phone</th>
+                <th className="py-2 px-4 font-medium text-gray-700">Address</th>
+                <th className="py-2 px-4 font-medium text-gray-700">Description</th>
+                <th className="py-2 px-4 font-medium text-gray-700">Status</th>
+                <th className="py-2 px-4 font-medium text-gray-700">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {Array.isArray(orphanages) &&
+                orphanages.map(orphanage => (
+                  <tr key={orphanage.id} className="hover:bg-gray-50 transition">
+                    {editId === orphanage.id ? (
+                      <React.Fragment key={orphanage.id}>
+                        <td className="py-2 px-4">
+                          <TextInput
+                            type="text"
+                            name="name"
+                            value={editData.name}
+                            onChange={handleChange}
+                            className="border-gray-300 rounded-lg"
+                          />
+                        </td>
+                        <td className="py-2 px-4">
+                          <TextInput
+                            type="text"
+                            name="email"
+                            value={editData.email || ""}
+                            onChange={handleChange}
+                            className="border-gray-300 rounded-lg"
+                          />
+                        </td>
+                        <td className="py-2 px-4">
+                          <TextInput
+                            type="text"
+                            name="phone_number"
+                            value={editData.phone_number || ""}
+                            onChange={handleChange}
+                            className="border-gray-300 rounded-lg"
+                          />
+                        </td>
+                        <td className="py-2 px-4">
+                          <TextInput
+                            type="text"
+                            name="address"
+                            value={editData.address || ""}
+                            onChange={handleChange}
+                            className="border-gray-300 rounded-lg"
+                          />
+                        </td>
+                        <td className="py-2 px-4">
+                          <TextInput
+                            type="text"
+                            name="description"
+                            value={editData.description || ""}
+                            onChange={handleChange}
+                            className="border-gray-300 rounded-lg"
+                          />
+                        </td>
+                        <td className="py-2 px-4">
+                          <Select
+                            id="text"
+                            name="status"
+                            value={editData.status}
+                            onChange={handleChange}
+                            onBlur={() => handleSaveStatus(editId)}
+                            className="border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                          >
+                            <option value="">Select Status</option>
+                            <option value="Approve">Approved</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Reject">Rejected</option>
+                          </Select>
+                        </td>
+                        <td className="py-2 px-4 flex gap-2">
+                          <Button 
+                            onClick={() => handleSave(orphanage.id)}
+                            className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition"
+                          >
+                            Save
+                          </Button>
+                          <Button 
+                            onClick={() => setEditId(null)}
+                            className="bg-gray-300 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-400 transition"
+                          >
+                            Cancel
+                          </Button>
+                        </td>
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment key={orphanage.id}>
+                        <td className="py-2 px-4">{orphanage.name}</td>
+                        <td className="py-2 px-4">{orphanage.email}</td>
+                        <td className="py-2 px-4">{orphanage.phone_number}</td>
+                        <td className="py-2 px-4">{orphanage.address}</td>
+                        <td className="py-2 px-4">{orphanage.description}</td>
+                        <td className="py-2 px-4">{orphanage.status.replace(/['"]+/g, '')}</td>
+                        <td className="py-2 px-4 flex gap-2">
+                          <Button 
+                            onClick={() => handleEdit(orphanage.id)}
+                            className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition"
+                          >
+                            Edit
+                          </Button>
+                          <Button 
+                            onClick={() => handleDelete(orphanage.id)}
+                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                          >
+                            Delete
+                          </Button>
+                        </td>
+                      </React.Fragment>
+                    )}
                   </tr>
-                </thead>
-                <tbody>
-                  {Array.isArray(orphanages) &&
-                    orphanages.map(orphanage => (
-                      <tr key={orphanage.id}>
-                        {editId === orphanage.id ? (
-                          <React.Fragment key={orphanage.id}>
-                            <td key={`${orphanage.id}-name`}>
-                              <TextInput
-                                type="text"
-                                name="name"
-                                value={editData.name}
-                                onChange={handleChange}
-                              />
-                            </td>
-                            <td key={`${orphanage.id}-email`}>
-                              <TextInput
-                                type="text"
-                                name="email"
-                                value={editData.email || ""}
-                                onChange={handleChange}
-                              />
-                            </td>
-                            <td key={`${orphanage.id}-phone_number`}>
-                              <TextInput
-                                type="text"
-                                name="phone_number"
-                                value={editData.phone_number || ""}
-                                onChange={handleChange}
-                              />
-                            </td>
-                            <td key={`${orphanage.id}-address`}>
-                              <TextInput
-                                type="text"
-                                name="address"
-                                value={editData.address || ""}
-                                onChange={handleChange}
-                              />
-                            </td>
-                            <td key={`${orphanage.id}-description`}>
-                              <TextInput
-                                type="text"
-                                name="description"
-                                value={editData.description || ""}
-                                onChange={handleChange}
-                              />
-                            </td>
-                            <td key={`${orphanage.id}-status`}>
-                              <Select
-                                id="text"
-                                name="status"
-                                value={editData.status}
-                                onChange={handleChange}
-                                onBlur={() => handleSaveStatus(editId)} // Tambahkan onBlur untuk memanggil handleSaveStatus
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                              >
-                                <option value="">Select Status</option>
-                                <option value='Approve'>Approved</option>
-                                <option value='Pending'>Pending</option>
-                                <option value='Reject'>Rejected</option>
-                              </Select>
-                            </td>
-                            <td
-                              key={`${orphanage.id}-actions`}
-                              className="flex flex-row gap-2"
-                            >
-                              <Button onClick={() => handleSave(orphanage.id)}>
-                                Save
-                              </Button>
-                              <Button onClick={() => setEditId(null)}>
-                                Cancel
-                              </Button>
-                            </td>
-                          </React.Fragment>
-                        ) : (
-                          <React.Fragment key={orphanage.id}>
-                            <td key={`${orphanage.id}-name`}>
-                              {orphanage.name}
-                            </td>
-                            <td key={`${orphanage.id}-email`}>
-                              {orphanage.email}
-                            </td>
-                            <td key={`${orphanage.id}-phone_number`}>
-                              {orphanage.phone_number}
-                            </td>
-                            <td key={`${orphanage.id}-address`}>
-                              {orphanage.address}
-                            </td>
-                            <td key={`${orphanage.id}-description`}>
-                              {orphanage.description}
-                            </td>
-                            <td key={`${orphanage.id}-status`}>
-                              {orphanage.status.replace(/['"]+/g, '')}
-                            </td>
-                            <td
-                              key={`${orphanage.id}-actions`}
-                              className="flex flex-row gap-2"
-                            >
-                              <Button onClick={() => handleEdit(orphanage.id)}>
-                                Edit
-                              </Button>
-                              <Button
-                                onClick={() => handleDelete(orphanage.id)}
-                              >
-                                Delete
-                              </Button>
-                            </td>
-                          </React.Fragment>
-                        )}
-                      </tr>
-                    ))}
-                </tbody>
-              </Table>
-            </CardBody>
-            <CardFooter>
-              <Pagination
-                showControls
-                total={Math.ceil(totalItems / itemsPerPage) || 0} // Pastikan nilai total adalah angka
-                initialPage={1}
-                onChange={page => setCurrentPage(page)}
-              />
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    </>
+                ))}
+            </tbody>
+          </Table>
+        </CardBody>
+        <CardFooter className="p-4 border-t">
+          <Pagination
+            showControls
+            total={Math.ceil(totalItems / itemsPerPage) || 0}
+            initialPage={1}
+            onChange={page => setCurrentPage(page)}
+            className="mt-4"
+          />
+        </CardFooter>
+      </Card>
+    </div>
+  </div>
+</>
   );
 }
 
