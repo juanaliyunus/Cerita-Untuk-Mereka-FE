@@ -76,8 +76,7 @@ function ConfirmBooks() {
   const handleStatusChange = async (id, newStatus) => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     try {
-      const data = { status: newStatus };
-      await axiosInstance.put(`/donations/${id}`, data, {
+      await axiosInstance.put(`/donations/${id}`, newStatus, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
