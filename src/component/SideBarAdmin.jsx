@@ -9,24 +9,18 @@ const SideBarAdmin=()=>{
         <div className="flex h-screen">
             <Sidebar aria-label="Sidebar with content" className="max-w-1/5">
                 <Sidebar.Items>
-                <h1 className="text-2xl font-bold text-center justify-center items-center">
-                    Dashboard
-                </h1>
                     <Sidebar.ItemGroup>
                         <Sidebar.Item href="/admin-dashboard" icon={HiChartPie}>
                             Dashboard
                         </Sidebar.Item>
                         <Sidebar.Item href="/admin-ListUsers" icon={GiThreeFriends}>
-                            List Donatur
+                            Donor List
                         </Sidebar.Item>
                         <Sidebar.Item href="/admin-ListOrphanage" icon={GiThreeFriends}>
-                            List Panti
+                            Orphanage List
                         </Sidebar.Item>
-                        {/* <Sidebar.Item href="/admin-AddOrphanage" icon={CgAdd}>
-                            Tambah Panti
-                        </Sidebar.Item> */}
                         <Sidebar.Item href="/admin-confirmBook" icon={GiConfirmed}>
-                            Konfirmasi Buku
+                            Book Confirmation
                         </Sidebar.Item>
 
                         <Sidebar.Item 

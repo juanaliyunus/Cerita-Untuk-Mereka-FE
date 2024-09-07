@@ -12,42 +12,75 @@ function ConfirmBooks() {
     body: "",
     onConfirm: () => {},
   });
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0); // Page starts from 0
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+ const formatDate = (millis) => {
+    const date = new Date(millis); // Gunakan millis langsung
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // months are 0-indexed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const fetchData = async () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(`/donations?page=${currentPage}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const booksData = response.data.data.data || [];
+
+      // Fetch fullname dan orphanage name
+      const updatedBooks = await Promise.all(
+        booksData.map(async (book) => {
+          const userResponse = await axiosInstance.get(`/donors/user/${book.user_id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const orphanageResponse = await axiosInstance.get(`/orphanages/${book.orphanages_id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          return {
+            ...book,
+            fullname: userResponse.data.data.fullname,
+            orphanage_name: orphanageResponse.data.data.name,
+            created_at: formatDate(book.created_at), // Format tanggal
+          };
+        })
+      );
+
+      setBooks(updatedBooks);
+      setHasMore(booksData.length > 0); // Check if there are more data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setBooks([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
-      try {
-        const response = await axiosInstance.get(`/donations?page=0`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (Array.isArray(response.data.data.data)) {
-          setBooks(response.data.data.data);
-          console.log("setBooks", response.data.data.data);
-        } else {
-          setBooks([]);
-          console.log("setBooks Else", response.data.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setBooks([]);
-      }
-    };
-
     fetchData();
-  }, []);
+  }, [currentPage]); // Trigger fetchData when currentPage changes
 
   const handleStatusChange = async (id, newStatus) => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     try {
       const data = { status: newStatus };
-      console.log("Sending data to backend:", data.status.replace(/['"]/g, '')); 
-      await axiosInstance.put(`/donations/${id}`, data.status.replace(/['"\/\\]/g, ''), { 
+      await axiosInstance.put(`/donations/${id}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       setBooks((prevBooks) =>
@@ -55,8 +88,7 @@ function ConfirmBooks() {
           book.id === id ? { ...book, status: newStatus } : book
         )
       );
-      console.log("Updated status to:", newStatus);
-      closeModal(); // Pastikan closeModal dipanggil setelah status diupdate
+      closeModal();
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -84,57 +116,117 @@ function ConfirmBooks() {
     });
   };
 
+  const handleNextPage = () => {
+    if (hasMore) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+
   return (
-    <div className="flex">
-      <SideBarAdmin />
-      <div className="ml-4 w-3/4">
-        <h1 className="text-2xl font-bold">Confirm Books</h1>
-        <Card>
-          <CardHeader>Confirmation Book</CardHeader>
-          <CardBody>
-            <Table className="w-full">
-              <thead>
-                <tr className="text-center">
-                  <th>Book Name</th>
-                  <th>Orphanages ID</th>
-                  <th>User ID</th>
-                  <th>Quantity</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody className="text-center">
-                {books.map((book, index) => (
-                  <tr key={index}>
-                    <td className="text-start">{book.book_name}</td>
-                    <td>{book.orphanages_id}</td>
-                    <td>{book.user_id}</td>
-                    <td>{book.quantity_donated}</td>
-                    <td>{book.status.replace(/['"]/g, '')}</td>
-                    <td className="flex justify-center space-x-2">
-                        <Button color="success" onClick={() => handleApprove(book.id)}>Approve</Button>
-                        <Button color="failure" onClick={() => handleReject(book.id)}>Reject</Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </CardBody>
-        </Card>
-      </div>
-      {isModalOpen && (
-        <Modal show={isModalOpen} onClose={closeModal}>
-          <ModalHeader>{modalContent.title}</ModalHeader>
-          <ModalBody>
-            <p>{modalContent.body}</p>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="success" onClick={modalContent.onConfirm}>Confirm</Button>
-            <Button color="failure" onClick={closeModal}>Cancel</Button>
-          </ModalFooter>
-        </Modal>
-      )}
-    </div>
+<div className="flex flex-col md:flex-row">
+  <SideBarAdmin className="md:w-1/4" />
+  <div className="md:ml-6 w-full md:w-3/4 p-4">
+    <Card className="shadow-lg rounded-lg">
+      <CardHeader className="bg-gray-100 border-b text-lg font-semibold p-4">
+        Confirmation Book
+      </CardHeader>
+      <CardBody className="p-6">
+        <Table className="w-full border-separate border-spacing-y-2">
+          <thead>
+            <tr className="text-center bg-gray-50 text-gray-600 uppercase text-sm leading-normal">
+              <th className="p-2">Book Name</th>
+              <th className="p-2">Orphanage Name</th>
+              <th className="p-2">User Fullname</th>
+              <th className="p-2">Quantity</th>
+              <th className="p-2">Status</th>
+              <th className="p-2">Date</th>
+              <th className="p-2">Action</th>
+            </tr>
+          </thead>
+          <tbody className="text-center text-gray-700">
+            {books.map((book, index) => (
+              <tr key={index} className="bg-white hover:bg-gray-100 shadow-sm">
+                <td className="p-3 text-left">{book.book_name}</td>
+                <td className="p-3">{book.orphanage_name}</td>
+                <td className="p-3">{book.fullname}</td>
+                <td className="p-3">{book.quantity_donated}</td>
+                <td className="p-3">{book.status}</td>
+                <td className="p-3">{book.created_at}</td>
+                <td className="flex justify-center space-x-2 p-3">
+                  <Button
+                    color="success"
+                    className="transition-transform transform hover:scale-105"
+                    onClick={() => handleApprove(book.id)}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    color="failure"
+                    className="transition-transform transform hover:scale-105"
+                    onClick={() => handleReject(book.id)}
+                  >
+                    Reject
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <div className="flex justify-between items-center mt-6">
+          <Button
+            color="gray"
+            onClick={handlePreviousPage}
+            disabled={currentPage === 0}
+            className="transition-colors hover:bg-gray-200"
+          >
+            &larr; Previous
+          </Button>
+          <p className="text-gray-600">Page {currentPage + 1}</p>
+          <Button
+            color="gray"
+            onClick={handleNextPage}
+            disabled={!hasMore}
+            className="transition-colors hover:bg-gray-200"
+          >
+            Next &rarr;
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
+  </div>
+  {isModalOpen && (
+    <Modal show={isModalOpen} onClose={closeModal} className="rounded-lg">
+      <ModalHeader className="text-xl font-bold text-gray-800">
+        {modalContent.title}
+      </ModalHeader>
+      <ModalBody className="p-4 text-gray-600">{modalContent.body}</ModalBody>
+      <ModalFooter className="flex justify-end space-x-2">
+        <Button
+          color="success"
+          onClick={modalContent.onConfirm}
+          className="transition-transform transform hover:scale-105"
+        >
+          Confirm
+        </Button>
+        <Button
+          color="failure"
+          onClick={closeModal}
+          className="transition-transform transform hover:scale-105"
+        >
+          Cancel
+        </Button>
+      </ModalFooter>
+    </Modal>
+  )}
+</div>
+
   );
 }
 
