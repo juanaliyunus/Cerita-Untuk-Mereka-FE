@@ -18,6 +18,7 @@ import CheckDonation from "./pages/donor/CheckDonation";
 import ListUsers from "./pages/admin/ListUsers";
 import ListOrphanages from "./pages/admin/ListOrphanages";
 import ConfirmBooks from "./pages/admin/ConfirmBooks";
+import HistoryDonationOrphanage from "./pages/orphanage/HistoryDonationOrphanage";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/admin" element={<HomePage />} />
         <Route path="/admin-dashboard" element={<HomePage />} />
         <Route path="/admin-ListUsers" element={<ListUsers />} />
         <Route path="/admin-ListOrphanage" element={<ListOrphanages />} />
@@ -42,6 +44,7 @@ function App() {
         <Route path="/orphanage-confirmBook" element={<ConfirmBook />} />
         <Route path="/orphanage-profile" element={<ProfileOrphanage />} />
         <Route path="/orphanage-sugest" element={<SugestOrphanagePage />} />
+        <Route path="/history-donation-orphanage" element ={<HistoryDonationOrphanage/>}/>
         <Route path="/donatur-checkDonation" element={<CheckDonation />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

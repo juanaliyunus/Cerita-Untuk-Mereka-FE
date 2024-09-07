@@ -4,6 +4,7 @@ import SideBar from '../../component/SideBar';
 import OrphanageCard from '../../component/OrphanageCard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Clock, Book, ShirtIcon, Bell, ArrowRight } from 'lucide-react';
+import BookNeeded from '../../component/BookNeeded';
 
 const data = [
   { name: 'Jan', donations: 65 },
@@ -93,32 +94,11 @@ function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-semibold">Daftar Kebutuhan Terbaru</h2>
-            </CardHeader>
-            <Divider />
-            <CardBody>
-              <ul className="space-y-2">
-                <li className="flex items-center">
-                  <Badge color="primary" variant="flat" className="mr-2">Buku</Badge>
-                  Buku Pelajaran Kelas 3
-                </li>
-                <li className="flex items-center">
-                  <Badge color="secondary" variant="flat" className="mr-2">Alat Tulis</Badge>
-                  Alat Tulis
-                </li>
-                <li className="flex items-center">
-                  <Badge color="success" variant="flat" className="mr-2">Pakaian</Badge>
-                  Seragam Sekolah
-                </li>
-              </ul>
-              <Button variant="flat" color="primary" className="w-full mt-4">
-                Lihat Semua Kebutuhan
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardBody>
-          </Card>
+        
+        
+        <BookNeeded>
+        </BookNeeded>
+        
 
           <Card>
             <CardHeader>

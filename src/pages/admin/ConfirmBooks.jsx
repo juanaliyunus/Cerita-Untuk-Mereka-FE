@@ -128,7 +128,6 @@ function ConfirmBooks() {
     }
   };
 
-
   return (
 <div className="flex flex-col md:flex-row">
   <SideBarAdmin className="md:w-1/4" />

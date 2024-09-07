@@ -36,13 +36,15 @@ const Navbar = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       axiosInstance
-        .get(`/donors/${decodedToken.sub}`, {
+        .get(`/donors/user/${decodedToken.sub}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
         .then((response) => {
           setAvatar(response.data.data.avatar);
+          console.log(response.data);
+          
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);

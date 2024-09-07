@@ -26,6 +26,8 @@ const Profile = () => {
   const [avatarFileName, setAvatarFileName] = useState("");
   
 
+  console.log("fulname =>"+fullname);
+  
   const fetchData = async () => {
     const token =
       sessionStorage.getItem("token") || localStorage.getItem("token");
@@ -36,16 +38,19 @@ const Profile = () => {
 
     const decodedToken = jwtDecode(token);
     console.log("Decoded token data:", decodedToken);
-    const url = `/donors/${decodedToken.sub}`;
+    const url = `/donors/user/${decodedToken.sub}`;
     console.log("Fetching profile from URL:", url);
-
+    console.log(decodedToken.sub);
+    console.log(token);
+    
     try {
       const response = await axiosInstance.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Full response data:", response.data);
+
+      console.log("Full response data =>", response.data);
       const profileData = response.data.data;
       console.log("Profile data:", profileData);
       setAvatar(profileData.avatar);
@@ -64,6 +69,8 @@ const Profile = () => {
     }
   };
 
+
+  
   useEffect(() => {
     fetchData();
   }, []);
