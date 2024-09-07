@@ -423,23 +423,6 @@ const HomePage = () => {
           </table>
         </div>
         </div>
-
-
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Panti Asuhan Aktif
-          </h2>
-          <ul className="divide-y divide-gray-200">
-            <li className="py-4 flex justify-between">
-              <span>Panti A</span>
-              <span className="font-bold text-gray-700">200 Buku</span>
-            </li>
-            <li className="py-4 flex justify-between">
-              <span>Panti B</span>
-              <span className="font-bold text-gray-700">150 Buku</span>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   );
