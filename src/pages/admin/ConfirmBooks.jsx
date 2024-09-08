@@ -13,11 +13,12 @@ function ConfirmBooks() {
     onConfirm: () => {},
   });
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0); // Page starts from 0
+  const [currentPage, setCurrentPage] = useState(1); // Page starts from 1
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
 
- const formatDate = (millis) => {
+  const formatDate = (millis) => {
     const date = new Date(millis); // Gunakan millis langsung
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0"); // months are 0-indexed
@@ -59,8 +60,20 @@ function ConfirmBooks() {
         })
       );
 
-      setBooks(updatedBooks);
-      setHasMore(booksData.length > 0); // Check if there are more data
+      // Filter out books with status other than 'pending'
+      const filteredBooks = updatedBooks.filter(book => book.status === 'pending');
+
+      // Urutkan berdasarkan tanggal terbaru hingga terlama
+      const sortedBooks = filteredBooks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      // Set total pages
+      setTotalPages(Math.ceil(sortedBooks.length / 15));
+
+      // Ambil data sesuai halaman
+      const paginatedBooks = sortedBooks.slice((currentPage - 1) * 15, currentPage * 15);
+
+      setBooks((prevBooks) => [...prevBooks, ...paginatedBooks]);
+      setHasMore(paginatedBooks.length > 0); // Check if there are more data
     } catch (error) {
       console.error("Error fetching data:", error);
       setBooks([]);
@@ -76,8 +89,7 @@ function ConfirmBooks() {
   const handleStatusChange = async (id, newStatus) => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     try {
-      const data = { status: newStatus };
-      await axiosInstance.put(`/donations/${id}`, data, {
+      await axiosInstance.put(`/donations/${id}`, newStatus, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -117,67 +129,82 @@ function ConfirmBooks() {
   };
 
   const handleNextPage = () => {
-    if (hasMore) {
+    if (currentPage < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 0) {
+    if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
 
   return (
-    <div className="flex">
-      <SideBarAdmin />
-      <div className="ml-4 w-3/4">
-        <h1 className="text-2xl font-bold">Confirm Books</h1>
-        <Card>
-          <CardHeader>Confirmation Book</CardHeader>
-          <CardBody>
-            <Table className="w-full">
+    <div className="flex flex-col md:flex-row">
+      <SideBarAdmin className="md:w-1/4" />
+      <div className="md:ml-6 w-full md:w-3/4 p-4">
+        <Card className="shadow-lg rounded-lg">
+          <CardHeader className="bg-gray-100 border-b text-lg font-semibold p-4">
+            Confirmation Book
+          </CardHeader>
+          <CardBody className="p-6">
+            <Table className="w-full border-separate border-spacing-y-2">
               <thead>
-                <tr className="text-center">
-                  <th>Book Name</th>
-                  <th>Orphanage Name</th>
-                  <th>User Fullname</th>
-                  <th>Quantity</th>
-                  <th>Status</th>
-                  <th>Date</th> {/* Tambahkan kolom Date */}
-                  <th>Action</th>
+                <tr className="text-center bg-gray-50 text-gray-600 uppercase text-sm leading-normal">
+                  <th className="p-2">Book Name</th>
+                  <th className="p-2">Orphanage Name</th>
+                  <th className="p-2">User Fullname</th>
+                  <th className="p-2">Quantity</th>
+                  <th className="p-2">Status</th>
+                  <th className="p-2">Date</th>
+                  <th className="p-2">Action</th>
                 </tr>
               </thead>
-              <tbody className="text-center">
+              <tbody className="text-center text-gray-700">
                 {books.map((book, index) => (
-                  <tr key={index}>
-                    <td className="text-start">{book.book_name}</td>
-                    <td>{book.orphanage_name}</td>
-                    <td>{book.fullname}</td>
-                    <td>{book.quantity_donated}</td>
-                    <td>{book.status}</td>
-                    <td>{book.created_at}</td> {/* Tampilkan tanggal donasi */}
-                    <td className="flex justify-center space-x-2">
-                      <Button color="success" onClick={() => handleApprove(book.id)}>Approve</Button>
-                      <Button color="failure" onClick={() => handleReject(book.id)}>Reject</Button>
+                  <tr key={index} className="bg-white hover:bg-gray-100 shadow-sm">
+                    <td className="p-3 text-left">{book.book_name}</td>
+                    <td className="p-3">{book.orphanage_name}</td>
+                    <td className="p-3">{book.fullname}</td>
+                    <td className="p-3">{book.quantity_donated}</td>
+                    <td className="p-3">{book.status}</td>
+                    <td className="p-3">{book.created_at}</td>
+                    <td className="flex justify-center space-x-2 p-3">
+                      <Button
+                        color="success"
+                        className="transition-transform transform hover:scale-105"
+                        onClick={() => handleApprove(book.id)}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        color="failure"
+                        className="transition-transform transform hover:scale-105"
+                        onClick={() => handleReject(book.id)}
+                      >
+                        Reject
+                      </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            <div className="flex justify-between items-center mt-4">
+            <div className="flex justify-between items-center mt-6">
               <Button
                 color="gray"
                 onClick={handlePreviousPage}
-                disabled={currentPage === 0} // Disable if on the first page
+                disabled={currentPage === 1}
+                className="transition-colors hover:bg-gray-200"
               >
                 &larr; Previous
               </Button>
-              <p>Page {currentPage + 1}</p>
+              <p className="text-gray-600">Page {currentPage} of {totalPages}</p>
               <Button
                 color="gray"
                 onClick={handleNextPage}
-                disabled={!hasMore} // Disable if there is no more data
+                disabled={currentPage === totalPages}
+                className="transition-colors hover:bg-gray-200"
               >
                 Next &rarr;
               </Button>
@@ -186,14 +213,26 @@ function ConfirmBooks() {
         </Card>
       </div>
       {isModalOpen && (
-        <Modal show={isModalOpen} onClose={closeModal}>
-          <ModalHeader>{modalContent.title}</ModalHeader>
-          <ModalBody>
-            <p>{modalContent.body}</p>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="success" onClick={modalContent.onConfirm}>Confirm</Button>
-            <Button color="failure" onClick={closeModal}>Cancel</Button>
+        <Modal show={isModalOpen} onClose={closeModal} className="rounded-lg">
+          <ModalHeader className="text-xl font-bold text-gray-800">
+            {modalContent.title}
+          </ModalHeader>
+          <ModalBody className="p-4 text-gray-600">{modalContent.body}</ModalBody>
+          <ModalFooter className="flex justify-end space-x-2">
+            <Button
+              color="success"
+              onClick={modalContent.onConfirm}
+              className="transition-transform transform hover:scale-105"
+            >
+              Confirm
+            </Button>
+            <Button
+              color="failure"
+              onClick={closeModal}
+              className="transition-transform transform hover:scale-105"
+            >
+              Cancel
+            </Button>
           </ModalFooter>
         </Modal>
       )}
