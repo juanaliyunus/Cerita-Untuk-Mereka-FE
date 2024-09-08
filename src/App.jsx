@@ -19,33 +19,97 @@ import ListUsers from "./pages/admin/ListUsers";
 import ListOrphanages from "./pages/admin/ListOrphanages";
 import ConfirmBooks from "./pages/admin/ConfirmBooks";
 import HistoryDonationOrphanage from "./pages/orphanage/HistoryDonationOrphanage";
-
+import PrivateRoute from "./service/PrivateRoute";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/admin" element={<HomePage />} />
-        <Route path="/admin-dashboard" element={<HomePage />} />
-        <Route path="/admin-ListUsers" element={<ListUsers />} />
-        <Route path="/admin-ListOrphanage" element={<ListOrphanages />} />
-        <Route path="/admin-confirmBook" element={<ConfirmBooks />} />
+        <Route path="/admin" element={
+          <PrivateRoute roles={['ROLE_ADMIN']}>
+            <HomePage />
+          </PrivateRoute>
+        } />
+        <Route path="/admin-dashboard" element={
+          <PrivateRoute roles={['ROLE_ADMIN']}>
+            <HomePage />
+          </PrivateRoute>
+        } />
+        <Route path="/admin-ListUsers" element={
+          <PrivateRoute roles={['ROLE_ADMIN']}>
+            <ListUsers />
+          </PrivateRoute>
+        } />
+        <Route path="/admin-ListOrphanage" element={
+          <PrivateRoute roles={['ROLE_ADMIN']}>
+            <ListOrphanages />
+          </PrivateRoute>
+        } />
+        <Route path="/admin-confirmBook" element={
+          <PrivateRoute roles={['ROLE_ADMIN']}>
+            <ConfirmBooks />
+          </PrivateRoute>
+        } />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/donatur-signup" element={<DonaturSignUp />} />
-        <Route path="/donatur-dashboard" element={<LandingPage />} />
-        <Route path="/donatur-orphanageList" element={<OrphanagaseListPage />} />
-        <Route path="/donatur-donate" element={<DonatePage />} />
-        <Route path="/donatur-profile" element={<DonaturPage />} />
+        <Route path="/donatur-dashboard" element={
+          <PrivateRoute roles={['ROLE_DONOR']}>
+            <LandingPage />
+          </PrivateRoute>
+        } />
+        <Route path="/donatur-orphanageList" element={
+          <PrivateRoute roles={['ROLE_DONOR']}>
+            <OrphanagaseListPage />
+          </PrivateRoute>
+        } />
+        <Route path="/donatur-donate" element={
+          <PrivateRoute roles={['ROLE_DONOR']}>
+            <DonatePage />
+          </PrivateRoute>
+        } />
+        <Route path="/donatur-profile" element={
+          <PrivateRoute roles={['ROLE_DONOR']}>
+            <DonaturPage />
+          </PrivateRoute>
+        } />
         <Route path="/about" element={<AboutPages />} />
-        <Route path="/orphanage-requestBook" element={<RequestBook />} />
+        <Route path="/orphanage-requestBook" element={
+          <PrivateRoute roles={['ROLE_ORPHANAGES']}>
+            <RequestBook />
+          </PrivateRoute>
+        } />
         <Route path="/orphanage-signup" element={<OrphanageSignUp />} />
-        <Route path="/orphanage-dashboard" element={<HomePageOrphanage />} />
-        <Route path="/orphanage-confirmBook" element={<ConfirmBook />} />
-        <Route path="/orphanage-profile" element={<ProfileOrphanage />} />
-        <Route path="/orphanage-sugest" element={<SugestOrphanagePage />} />
-        <Route path="/history-donation-orphanage" element ={<HistoryDonationOrphanage/>}/>
-        <Route path="/donatur-checkDonation" element={<CheckDonation />} />
+        <Route path="/orphanage-dashboard" element={
+          <PrivateRoute roles={['ROLE_ORPHANAGES']}>
+            <HomePageOrphanage />
+          </PrivateRoute>
+        } />
+        <Route path="/orphanage-confirmBook" element={
+          <PrivateRoute roles={['ROLE_ORPHANAGES']}>
+            <ConfirmBook />
+          </PrivateRoute>
+        } />
+        <Route path="/orphanage-profile" element={
+          <PrivateRoute roles={['ROLE_ORPHANAGES']}>
+            <ProfileOrphanage />
+          </PrivateRoute>
+        } />
+        <Route path="/orphanage-sugest" element={
+          <PrivateRoute roles={['ROLE_ORPHANAGES']}>
+            <SugestOrphanagePage />
+          </PrivateRoute>
+        } />
+        <Route path="/history-donation-orphanage" element={
+          <PrivateRoute roles={['ROLE_ORPHANAGES']}>
+            <HistoryDonationOrphanage />
+          </PrivateRoute>
+        } />
+        <Route path="/donatur-checkDonation" element={
+          <PrivateRoute roles={['ROLE_DONOR']}>
+            <CheckDonation />
+          </PrivateRoute>
+        } />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>

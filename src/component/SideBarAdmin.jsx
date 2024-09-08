@@ -1,5 +1,5 @@
 import { Sidebar } from "flowbite-react"
-import { BiLogOut } from "react-icons/bi"
+import { BiHistory, BiLogOut } from "react-icons/bi"
 import { CgAdd } from "react-icons/cg"
 import { GiConfirmed, GiThreeFriends } from "react-icons/gi"
 import { HiChartPie } from "react-icons/hi2"
@@ -22,6 +22,7 @@ const SideBarAdmin=()=>{
                         <Sidebar.Item href="/admin-confirmBook" icon={GiConfirmed}>
                             Book Confirmation
                         </Sidebar.Item>
+                        
 
                         <Sidebar.Item 
                             href="/" 

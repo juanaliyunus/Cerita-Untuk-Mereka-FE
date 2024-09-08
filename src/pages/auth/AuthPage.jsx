@@ -1,9 +1,6 @@
-import {
-  Checkbox,
-  Input,
-} from "@nextui-org/react";
+import { Checkbox, Input } from "@nextui-org/react";
 import { Button, Modal } from "flowbite-react"; // Import Modal
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Corrected import
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,23 +20,26 @@ const AuthPage = () => {
   const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const [showSignUpModal, setShowSignUpModal] = useState(false); // Modal state for SignUp
+  const [isNavigated, setIsNavigated] = useState(false); // State to prevent looping
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-    if (token) {
+    if (token && !isNavigated) {
       const user = jwtDecode(token);
+      console.log("Decoded user:", user); // Tambahkan log untuk debugging
       if (user.role === "ROLE_DONOR") {
         navigate("/donatur-dashboard");
-      } else if (user.role === "ROLE_ORPHANAGE") {
+      } else if (user.role === "ROLE_ORPHANAGES") { // Konsisten dengan "ROLE_ORPHANAGES"
         navigate("/orphanage-dashboard");
       } else if (user.role === "ROLE_ADMIN") {
-        navigate("/admin");
+        navigate("/admin-dashboard");
       }
+      setIsNavigated(true); // Set state to prevent further navigation
     }
-  }, [navigate]);
+  }, [navigate, isNavigated]);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async e => {
     e.preventDefault();
     const { username, password } = e.target.elements;
 
@@ -77,24 +77,29 @@ const AuthPage = () => {
       }
 
       const user = jwtDecode(token);
+      console.log("Decoded user after login:", user); // Tambahkan log untuk debugging
 
       if (rememberMe) {
         localStorage.setItem("token", token);
+        localStorage.setItem("role", user.role);
       } else {
         sessionStorage.setItem("token", token);
+        sessionStorage.setItem("role", user.role);
       }
-      console.log(user.role);
+
       if (user.role === "ROLE_DONOR") {
         navigate("/donatur-dashboard");
-      } else if (user.role === "ROLE_ORPHANAGES") {
+      } else if (user.role === "ROLE_ORPHANAGES") { // Konsisten dengan "ROLE_ORPHANAGES"
         navigate("/orphanage-dashboard");
       } else if (user.role === "ROLE_ADMIN") {
-        navigate("/admin");
+        navigate("/admin-dashboard");
       }
     } catch (error) {
       console.error("Login error:", error);
       if (error.code === "ERR_NETWORK") {
-        setErrorMessage("Kesalahan jaringan. Pastikan Anda terhubung ke internet dan server berjalan.");
+        setErrorMessage(
+          "Kesalahan jaringan. Pastikan Anda terhubung ke internet dan server berjalan."
+        );
       } else if (error.response?.status === 401) {
         setErrorMessage("Username atau Password Salah");
       } else if (error.response?.status === 400) {
@@ -106,7 +111,7 @@ const AuthPage = () => {
   };
 
   // Handle sign-up modal
-  const handleSignUp = (role) => {
+  const handleSignUp = role => {
     if (role === "donatur") {
       navigate("/donatur-signup");
     } else if (role === "orphanage") {
@@ -168,7 +173,7 @@ const AuthPage = () => {
                 <div className="flex items-center">
                   <Checkbox
                     checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
+                    onChange={e => setRememberMe(e.target.checked)}
                     className="mr-2"
                   />
                   <span className="text-sm">Remember Me</span>
@@ -176,7 +181,7 @@ const AuthPage = () => {
                 <div className="flex items-center">
                   <Checkbox
                     checked={showPassword}
-                    onChange={(e) => setShowPassword(e.target.checked)} // Toggle password visibility
+                    onChange={e => setShowPassword(e.target.checked)} // Toggle password visibility
                     className="mr-2"
                   />
                   <span className="text-sm">Show Password</span>
