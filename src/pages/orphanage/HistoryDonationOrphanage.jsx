@@ -47,13 +47,13 @@ function HistoryDonationOrphanage() {
       );
       const donations = response.data.data.data;
       setDonationData(donations);
-      donations.forEach((donation) => fetchDonorDetails(donation.user_id));
+      donations.forEach((donation) => fetchDonorDetails(donation.user_id,donation.id));
     } catch (error) {
       handleError(error, "Failed to fetch donation data");
     }
   };
 
-  const fetchDonorDetails = async (userId) => {
+  const fetchDonorDetails = async (userId,donationId) => {
     const token = getToken();
     try {
       const response = await axiosInstance.get(`/donors/user/${userId}`, {
@@ -61,10 +61,30 @@ function HistoryDonationOrphanage() {
       });
       const { fullname, id } = response.data.data;
       setDonorDetails((prev) => ({ ...prev, [userId]: { fullname, id } }));
+      // console.log("asasass",response.data.data.id)
+      // console.log("asasasas",donationId)
+      fetchFeedbackDonor(donationId,response.data.data.id,orphanageId)
     } catch (error) {
       handleError(error, "Failed to fetch donor details");
     }
   };
+
+  const fetchFeedbackDonor = async (donationId,donorId,orphanagesId) => {
+    const token = getToken();
+    try {
+      const response = await axiosInstance.get(`/feedback/donor/${donorId}/orphanages/${orphanagesId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data.data,"sasasas")
+      setFeedback((prev) => ({
+        ...prev,
+        status: { ...prev.status, [donationId]: true }, // Tandai feedback sudah dikirim
+        text: { ...prev.text, [donationId]: "" },
+      }));
+    } catch (error) {
+      handleError(error, "Failed to fetch donor details");
+    }
+  }
 
   const fetchFeedback = async () => {
     const token = getToken();
@@ -75,7 +95,22 @@ function HistoryDonationOrphanage() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      // let data = [];
+      // data.push(...response.data.data.data)
       setFeedbackData(response.data.data.data);
+      // console.log("asasasa" , response.data.data.total_page)
+      // for (let i = 1; i < response.data.data.total_page; i++) {
+      //   const response = await axiosInstance.get(
+      //     `/feedback/by-orphanages/${orphanageId}?page=${i}`,
+      //     {
+      //       headers: { Authorization: `Bearer ${token}` },
+      //     }
+      //   );
+      //   data.push(...response.data.data.data)
+      //   // setFeedbackData(response.data.data.data);
+      // }
+      // console.log("data: ", data)
+      // setFeedbackData(data)
     } catch (error) {
       handleError(error, "Failed to fetch feedback");
     }
