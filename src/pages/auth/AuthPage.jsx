@@ -21,6 +21,7 @@ const AuthPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const [showSignUpModal, setShowSignUpModal] = useState(false); // Modal state for SignUp
   const navigate = useNavigate();
 
@@ -115,7 +116,7 @@ const AuthPage = () => {
   };
 
   return (
-<>
+    <>
       <Helmet>
         <title>Auth Page</title>
       </Helmet>
@@ -154,7 +155,7 @@ const AuthPage = () => {
                 label="Password"
                 name="password"
                 className="mb-4 w-full"
-                type="password"
+                type={showPassword ? "text" : "password"} // Toggle input type based on showPassword
                 onChange={() => {
                   setPasswordError("");
                   setErrorMessage("");
@@ -171,6 +172,14 @@ const AuthPage = () => {
                     className="mr-2"
                   />
                   <span className="text-sm">Remember Me</span>
+                </div>
+                <div className="flex items-center">
+                  <Checkbox
+                    checked={showPassword}
+                    onChange={(e) => setShowPassword(e.target.checked)} // Toggle password visibility
+                    className="mr-2"
+                  />
+                  <span className="text-sm">Show Password</span>
                 </div>
               </div>
               <Button
@@ -225,7 +234,6 @@ const AuthPage = () => {
         </Modal.Body>
       </Modal>
     </>
-
   );
 };
 

@@ -61,9 +61,9 @@ console.log(avatar);
             <Sidebar.Item href="/orphanage-requestBook" icon={BiBookAdd}>
               Request Buku
             </Sidebar.Item>
-            <Sidebar.Item href="/orphanage-confirmBook" icon={GiConfirmed}>
+            {/* <Sidebar.Item href="/orphanage-confirmBook" icon={GiConfirmed}>
               Konfirmasi Barang
-            </Sidebar.Item>
+            </Sidebar.Item> */}
             <Sidebar.Item href="/history-donation-orphanage" icon={BiHistory}>
               History
             </Sidebar.Item>
