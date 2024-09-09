@@ -170,7 +170,7 @@ const HomePage = () => {
           hasMoreData = data.length === 15;
           currentPage += 1;
         }
-
+        
         setTotalBooks(totalQuantityDonated);
         setStatusBooks(statusCount);
         setBookMonth(bookMonth);
@@ -184,7 +184,9 @@ const HomePage = () => {
           return donationsByUser[userId];
         });
 
-        setDonorDetails(await Promise.all(donorNamesPromises));
+        const donorDetails = await Promise.all(donorNamesPromises);
+        setDonorDetails(donorDetails);
+        setTotalDonors(donorDetails.length); // Set total donors
       } catch {
         setError("Gagal Memuat Buku");
       } finally {
