@@ -94,26 +94,24 @@ function ListUsers() {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {Array.isArray(donors) &&
-                    donors
-                      .sort((a, b) => a.fullname.localeCompare(b.fullname)) // Sorting based on fullname
-                      .map(donor => (
-                        <tr key={donor.id} className="hover:bg-gray-50 transition">
-                          <React.Fragment key={donor.id}>
-                            <td key={`${donor.id}-fullname`} className="py-2 px-4">{donor.fullname}</td>
-                            <td key={`${donor.id}-email`} className="py-2 px-4">{donor.email}</td>
-                            <td key={`${donor.id}-phone_number`} className="py-2 px-4">{donor.phone_number}</td>
-                            <td key={`${donor.id}-address`} className="py-2 px-4">{donor.address}</td>
-                            <td key={`${donor.id}-actions`} className="py-2 px-4 flex gap-2">
-                              <Button 
-                                onClick={() => handleDelete(donor.id)}
-                                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                              >
-                                Delete
-                              </Button>
-                            </td>
-                          </React.Fragment>
-                        </tr>
-                      ))}
+                    donors.map(donor => (
+                      <tr key={donor.id} className="hover:bg-gray-50 transition">
+                        <React.Fragment key={donor.id}>
+                          <td key={`${donor.id}-fullname`} className="py-2 px-4">{donor.fullname}</td>
+                          <td key={`${donor.id}-email`} className="py-2 px-4">{donor.email}</td>
+                          <td key={`${donor.id}-phone_number`} className="py-2 px-4">{donor.phone_number}</td>
+                          <td key={`${donor.id}-address`} className="py-2 px-4">{donor.address}</td>
+                          <td key={`${donor.id}-actions`} className="py-2 px-4 flex gap-2">
+                            <Button 
+                              onClick={() => handleDelete(donor.id)}
+                              className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                            >
+                              Delete
+                            </Button>
+                          </td>
+                        </React.Fragment>
+                      </tr>
+                    ))}
                 </tbody>
               </Table>
             </CardBody>

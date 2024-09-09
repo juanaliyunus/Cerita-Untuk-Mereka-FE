@@ -133,6 +133,18 @@ function ListOrphanages() {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
+  const handleStatus = () => {
+    const sortedOrphanages = [...orphanages].sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.status.localeCompare(b.status);
+      } else {
+        return b.status.localeCompare(a.status);
+      }
+    });
+    setOrphanages(sortedOrphanages);
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
   return (
 <>
   <div className="flex h-screen bg-gray-100">
@@ -156,7 +168,7 @@ function ListOrphanages() {
                 <th className="py-2 px-4 font-medium text-gray-700">Phone</th>
                 <th className="py-2 px-4 font-medium text-gray-700">Address</th>
                 <th className="py-2 px-4 font-medium text-gray-700">Description</th>
-                <th className="py-2 px-4 font-medium text-gray-700">Status</th>
+                <th onClick={handleStatus} className="py-2 px-4 font-medium text-gray-700 cursor-pointer hover:text-gray-900 transition">Status {sortOrder === "asc" ? "↑" : "↓"}</th>
                 <th className="py-2 px-4 font-medium text-gray-700">Action</th>
               </tr>
             </thead>
