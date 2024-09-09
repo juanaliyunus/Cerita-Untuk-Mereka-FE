@@ -1,15 +1,22 @@
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
+import { Card, CardBody, CardHeader, Image } from "@nextui-org/react";
+import {
+  Button,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  TextInput,
+} from "flowbite-react";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import SideBar from "../../component/SideBar";
 import axiosInstance from "../../lib/axiosInstance";
 
-function ProfileOrphanage() {
+const ProfileOrphanage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [avatar, setAvatar] = useState("");
-  const [avatarPreview, setAvatarPreview] = useState(""); // New state for preview
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -50,13 +57,12 @@ function ProfileOrphanage() {
 
   useEffect(() => {
     fetchData();
-  }, []); // Empty dependency array to run once on mount
+  }, []);
 
   const handleAvatarChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       setIsAvatarChanged(true);
-      setAvatarPreview(URL.createObjectURL(file)); // Set preview image
       const formData = new FormData();
       const fileName = file.name.replace(/\s+/g, "_");
       const renamedFile = new File([file], fileName, { type: file.type });
@@ -85,7 +91,6 @@ function ProfileOrphanage() {
 
   const handleSave = async () => {
     const url = `/orphanages/${orphanageId}`;
-
     const token = sessionStorage.getItem("token") || localStorage.getItem("token");
     if (!token) {
       console.error("No token found");
@@ -102,17 +107,16 @@ function ProfileOrphanage() {
 
     try {
       if (isAvatarChanged) {
-        // Avatar already uploaded, no need to call handleAvatarChange here
-        formData.append("avatar", avatarFileName);
+        await handleAvatarChange({ target: { files: [avatar] } });
       }
-      await axiosInstance.put(url, formData, {
+      const response = await axiosInstance.put(url, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
-      setIsEditing(false); // Reset editing mode
-      fetchData(); // Update the displayed data immediately after save
+      setIsEditing(false);
+      fetchData();
     } catch (error) {
       console.error("Failed to save profile:", error.response?.data || "Network error or server is down");
     }
@@ -120,27 +124,18 @@ function ProfileOrphanage() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    switch (name) {
-      case "name":
-        setName(value);
-        break;
-      case "email":
-        setEmail(value);
-        break;
-      case "phone":
-        setPhone(value);
-        break;
-      case "address":
-        setAddress(value);
-        break;
-      case "description":
-        setDescription(value);
-        break;
-      case "website":
-        setWebsite(value);
-        break;
-      default:
-        break;
+    if (name === "name") {
+      setName(value);
+    } else if (name === "email") {
+      setEmail(value);
+    } else if (name === "phone") {
+      setPhone(value);
+    } else if (name === "address") {
+      setAddress(value);
+    } else if (name === "description") {
+      setDescription(value);
+    } else if (name === "website") {
+      setWebsite(value);
     }
   };
 
@@ -156,10 +151,9 @@ function ProfileOrphanage() {
             <div className="flex justify-center mb-6">
               <img
                 src={
-                  avatarPreview || // Display preview if available
-                  (avatar
+                  avatar
                     ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`
-                    : 'path/to/default/avatar.png')
+                    : "path/to/default/avatar.png"
                 }
                 alt="Avatar"
                 className="w-32 h-32 rounded-full border-4 border-blue-500"
@@ -175,12 +169,12 @@ function ProfileOrphanage() {
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
-                  { label: 'Nama Panti', name: 'name', type: 'text', value: name },
-                  { label: 'Email', name: 'email', type: 'email', value: email },
-                  { label: 'Nomor Telepon', name: 'phone', type: 'text', value: phone },
-                  { label: 'Alamat', name: 'address', type: 'text', value: address },
-                  { label: 'Deskripsi', name: 'description', type: 'text', value: description },
-                  { label: 'Website', name: 'website', type: 'text', value: website },
+                  { label: "Nama Panti", name: "name", type: "text", value: name },
+                  { label: "Email", name: "email", type: "email", value: email },
+                  { label: "Nomor Telepon", name: "phone", type: "text", value: phone },
+                  { label: "Alamat", name: "address", type: "text", value: address },
+                  { label: "Deskripsi", name: "description", type: "text", value: description },
+                  { label: "Website", name: "website", type: "text", value: website },
                 ].map(({ label, name, type, value }) => (
                   <div key={name} className="flex flex-col">
                     <label className="text-sm font-medium text-gray-700">{label}</label>
@@ -206,29 +200,24 @@ function ProfileOrphanage() {
                     }
                   }}
                 >
-                  {isEditing ? 'Save' : 'Edit'}
+                  {isEditing ? "Save" : "Edit"}
                 </Button>
               </div>
-              <Modal open={openModal} onClose={() => setOpenModal(false)} className="p-6 bg-white shadow-lg rounded-lg">
+              <Modal show={openModal} onClose={() => setOpenModal(false)} className="p-6 bg-white shadow-lg rounded-lg">
                 <ModalHeader>
-                  <h2 className="text-xl font-semibold text-gray-800">Konfirmasi Simpan</h2>
+                  <p className="text-xl font-semibold text-gray-800">Konfirmasi Simpan</p>
                 </ModalHeader>
                 <ModalBody>
                   <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
                 </ModalBody>
                 <ModalFooter>
-                  <Button
-                    color="gray"
-                    onClick={() => setOpenModal(false)}
-                  >
+                  <Button color="gray" onClick={() => setOpenModal(false)}>
                     Batal
                   </Button>
-                  <Button
-                    onClick={() => {
-                      handleSave();
-                      setOpenModal(false);
-                    }}
-                  >
+                  <Button onClick={() => {
+                    handleSave();
+                    setOpenModal(false);
+                  }}>
                     Simpan
                   </Button>
                 </ModalFooter>
@@ -239,6 +228,6 @@ function ProfileOrphanage() {
       </div>
     </div>
   );
-}
+};
 
 export default ProfileOrphanage;
