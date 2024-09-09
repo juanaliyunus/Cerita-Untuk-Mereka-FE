@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SideBar from "../../component/SideBar";
 import {jwtDecode} from "jwt-decode"; // Perbaiki impor jwtDecode
 import axiosInstance from "../../lib/axiosInstance";
+import { Button, Input } from "@nextui-org/react";
 
 function HistoryDonationOrphanage() {
   const [orphanageId, setOrphanageId] = useState("");
@@ -46,8 +47,10 @@ function HistoryDonationOrphanage() {
         }
       );
       const donations = response.data.data.data;
+      // Urutkan donasi berdasarkan created_at
+      donations.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
       setDonationData(donations);
-      donations.forEach((donation) => fetchDonorDetails(donation.user_id,donation.id));
+      donations.forEach((donation) => fetchDonorDetails(donation.user_id, donation.id));
     } catch (error) {
       handleError(error, "Failed to fetch donation data");
     }
@@ -72,13 +75,13 @@ function HistoryDonationOrphanage() {
   const fetchFeedbackDonor = async (donationId,donorId,orphanagesId) => {
     const token = getToken();
     try {
-      const response = await axiosInstance.get(`/feedback/donor/${donorId}/orphanages/${orphanagesId}`, {
+      const response = await axiosInstance.get(`/feedback/donor/${donorId}/orphanages/${orphanagesId}/donation/${donationId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(response.data.data,"sasasas")
       setFeedback((prev) => ({
         ...prev,
-        status: { ...prev.status, [donationId]: true }, // Tandai feedback sudah dikirim
+        status: { ...prev.status, [donationId]: response.data.data }, // Tandai feedback sudah dikirim
         text: { ...prev.text, [donationId]: "" },
       }));
     } catch (error) {
@@ -132,15 +135,21 @@ function HistoryDonationOrphanage() {
       feedback_text: feedback.text[donationId],
     };
 
+
     try {
       await axiosInstance.post("/feedback", feedbackPayload, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("first", token)
       setFeedback((prev) => ({
         ...prev,
         status: { ...prev.status, [donationId]: true }, // Tandai feedback sudah dikirim
         text: { ...prev.text, [donationId]: "" },
       }));
+      const response = await axiosInstance.get(`/feedback/status-feedback/${donationId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response,"response")
     } catch (error) {
       handleError(error, "Failed to submit feedback");
     }
@@ -226,7 +235,7 @@ function HistoryDonationOrphanage() {
                               )
                             }
                           >
-                            <input
+                            <Input
                               type="text"
                               value={feedback.text[donation.id] || ""}
                               onChange={(e) =>
@@ -239,16 +248,18 @@ function HistoryDonationOrphanage() {
                                 }))
                               }
                               placeholder="Enter feedback"
-                              className="px-2 py-1 border border-gray-300 rounded"
-                              disabled={feedback.status[donation.id]} // Nonaktifkan jika sudah kirim
+                              className="px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              disabled={feedback.status[donation.id] || donation.status !== 'delivered'} // Nonaktifkan jika sudah kirim atau status bukan 'Delivered'
                             />
-                            <button
-                              type="submit"
-                              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-                              disabled={feedback.status[donation.id]} // Nonaktifkan jika sudah kirim
-                            >
-                              Submit
-                            </button>
+                            {donation.status === 'delivered' && (
+                              <Button
+                                type="submit"
+                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                disabled={feedback.status[donation.id]} // Nonaktifkan jika sudah kirim
+                              >
+                                Submit
+                              </Button>
+                            )}
                           </form>
                         )}
                       </td>
