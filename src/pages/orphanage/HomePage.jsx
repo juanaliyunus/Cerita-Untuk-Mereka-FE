@@ -19,7 +19,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Clock, Book, ShirtIcon, Bell, ArrowRight } from "lucide-react";
+import {  Book, ShirtIcon, Bell, ArrowRight } from "lucide-react";
 import BookNeeded from "../../component/BookNeeded";
 import axiosInstance from "../../lib/axiosInstance";
 import {jwtDecode} from "jwt-decode";
@@ -126,8 +126,7 @@ const HomePage = () => {
         }
         setBookMonth(bookMonthData);
         setTotalDonations(totalDonations);
-        // Set data kebutuhan ke state jika diperlukan
-        // setNeedsData(needsData); // Uncomment jika ada state untuk menyimpan data kebutuhan
+
       } catch (error) {
         setError("Gagal Memuat Buku");
       } finally {
@@ -139,99 +138,59 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="flex h-screen bg-[#E0F7FA]">
-      <SideBar />
-      <div className="flex-grow p-6 overflow-auto">
-        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+<div className="flex h-screen bg-[#E0F7FA]">
+  <SideBar />
+  <div className="flex-grow p-8 overflow-auto">
+    <h1 className="text-4xl font-semibold mb-8 text-[#333]">Dashboard</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <StatCard title="Total Donasi" value={totalDonations} icon={Book} />
-          <StatCard title="Kebutuhan Terpenuhi" value={percentage.toFixed(0) + "%"} icon={Bell} />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-semibold">Trend Donasi</h2>
-            </CardHeader>
-            <Divider />
-            <CardBody>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={bookMonth.map((donations, index) => ({
-                    name: new Date(0, index).toLocaleString("default", {
-                      month: "short",
-                    }),
-                    donations,
-                  }))}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="donations" fill="var(--nextui-primary)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardBody>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-semibold">Aktivitas Terbaru</h2>
-            </CardHeader>
-            <Divider />
-            <CardBody>
-              <ActivityItem
-                icon={Book}
-                title="Donasi Buku Baru"
-                time="5 menit lalu"
-              />
-              <ActivityItem
-                icon={ShirtIcon}
-                title="Pengiriman dalam proses"
-                time="2 hari lalu"
-              />
-              <ActivityItem
-                icon={Bell}
-                title="Pesan baru dari Donatur"
-                time="1 jam lalu"
-              />
-              <Button variant="flat" color="primary" className="w-full mt-4">
-                Lihat Semua Aktivitas
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardBody>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <BookNeeded></BookNeeded>
-
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-semibold">Pengumuman</h2>
-            </CardHeader>
-            <Divider />
-            <CardBody>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium">Acara Bazar Buku</h3>
-                  <p className="text-sm text-default-500">Minggu depan</p>
-                </div>
-                <div>
-                  <h3 className="font-medium">Liburan Bersama Anak-anak</h3>
-                  <p className="text-sm text-default-500">Bulan depan</p>
-                </div>
-              </div>
-              <Button variant="flat" color="primary" className="w-full mt-4">
-                Lihat Semua Pengumuman
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardBody>
-          </Card>
-        </div>
-      </div>
+    {/* Stat Card Row */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <StatCard
+        title="Total Donasi"
+        value={totalDonations}
+        icon={Book}
+        className="bg-white shadow-lg rounded-lg p-6"
+      />
+      <StatCard
+        title="Kebutuhan Terpenuhi"
+        value={`${percentage.toFixed(0)}%`}
+        icon={Bell}
+        className="bg-white shadow-lg rounded-lg p-6"
+      />
     </div>
+
+    {/* Trend Donasi and Book Needed Row */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <Card className="bg-white shadow-lg rounded-lg">
+        <CardHeader className="p-6 border-b border-gray-200">
+          <h2 className="text-2xl font-semibold text-[#333]">Trend Donasi</h2>
+        </CardHeader>
+        <CardBody className="p-6">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={bookMonth.map((donations, index) => ({
+                name: new Date(0, index).toLocaleString("default", {
+                  month: "short",
+                }),
+                donations,
+              }))}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="donations" fill="#007BFF" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardBody>
+      </Card>
+
+      <BookNeeded className="bg-white shadow-lg rounded-lg p-6" />
+    </div>
+  </div>
+</div>
+
+
   );
 };
 

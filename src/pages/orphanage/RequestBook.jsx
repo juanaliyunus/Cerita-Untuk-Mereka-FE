@@ -41,7 +41,7 @@ function RequestBook() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-[#E0F7FA]">
       <SideBar />
       <div className="flex-grow p-8 flex items-center justify-center">
         <Card className="w-full max-w-md mx-auto shadow-lg rounded-lg bg-white p-6">

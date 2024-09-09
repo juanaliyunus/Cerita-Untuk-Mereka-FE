@@ -1,6 +1,6 @@
 import { Checkbox, Input } from "@nextui-org/react";
-import { Button, Modal } from "flowbite-react"; // Import Modal
-import { jwtDecode } from "jwt-decode"; // Corrected import
+import { Button, Modal } from "flowbite-react"; 
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
