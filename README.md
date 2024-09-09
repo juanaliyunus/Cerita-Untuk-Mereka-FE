@@ -1,6 +1,6 @@
-# React + Vite + Redux + NextUI
+# Cerita Untuk Mereka
 
-Proyek ini menggunakan React dengan Vite untuk pengembangan cepat, Redux untuk manajemen state, dan NextUI untuk komponen UI.
+Proyek ini adalah aplikasi web yang dibangun menggunakan React, Vite, Redux, dan NextUI. Aplikasi ini bertujuan untuk menyediakan platform bagi pengguna untuk berbagi cerita dan pengalaman.
 
 ## Struktur Proyek
 
@@ -35,3 +35,13 @@ Proyek ini menggunakan React dengan Vite untuk pengembangan cepat, Redux untuk m
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) menggunakan [Babel](https://babeljs.io/) untuk Fast Refresh.
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) menggunakan [SWC](https://swc.rs/) untuk Fast Refresh.
+
+## Struktur Direktori
+
+- `public/`: Berisi aset publik seperti ikon dan gambar.
+- `src/`: Berisi kode sumber aplikasi.
+  - `assets/`: Berisi aset seperti gambar dan ikon.
+  - `component/`: Berisi komponen-komponen React yang digunakan dalam aplikasi.
+  - `pages/`: Berisi halaman-halaman utama aplikasi.
+  - `store/`: Berisi konfigurasi store Redux.
+  - `lib/`: Berisi utilitas dan konfigurasi seperti instance axios.
