@@ -170,7 +170,7 @@ const HomePage = () => {
           hasMoreData = data.length === 15;
           currentPage += 1;
         }
-        
+
         setTotalBooks(totalQuantityDonated);
         setStatusBooks(statusCount);
         setBookMonth(bookMonth);
@@ -184,9 +184,7 @@ const HomePage = () => {
           return donationsByUser[userId];
         });
 
-        const donorDetails = await Promise.all(donorNamesPromises);
-        setDonorDetails(donorDetails);
-        setTotalDonors(donorDetails.length); // Set total donors
+        setDonorDetails(await Promise.all(donorNamesPromises));
       } catch {
         setError("Gagal Memuat Buku");
       } finally {
@@ -195,6 +193,39 @@ const HomePage = () => {
     };
 
     fetchBooks();
+  }, []);
+
+  useEffect(() => {
+    const fetchDonors = async () => {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+      try {
+        let currentPage = 0;
+        let allDonors = [];
+        let hasMoreData = true;
+
+        while (hasMoreData) {
+          const response = await axiosInstance.get(`/donors?page=${currentPage}&limit=15`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const data = response.data.data.data;
+          allDonors = [...allDonors, ...data];
+          hasMoreData = data.length === 15;
+          currentPage += 1;
+        }
+
+        setTotalDonors(allDonors.length);
+      } catch {
+        setError("Gagal memuat data donatur");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDonors();
   }, []);
 
 

@@ -6,13 +6,12 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Pagination,
 } from "@nextui-org/react";
 import SideBarAdmin from "../../component/SideBarAdmin";
 
 function ListOrphanages() {
   const [orphanages, setOrphanages] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
@@ -24,7 +23,7 @@ function ListOrphanages() {
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
     axiosInstance
-      .get(`/orphanages?page=${currentPage - 1}&size=${itemsPerPage}`, {
+      .get(`/orphanages?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,7 +32,8 @@ function ListOrphanages() {
         console.log(res.data.data.data);
         if (Array.isArray(res.data.data.data)) {
           setOrphanages(res.data.data.data);
-          setTotalItems(res.data.data.total);
+          setTotalItems(res.data.data.total_page * itemsPerPage); // Menggunakan total_page untuk menghitung total items
+          console.log("totalPages: ", res.data.data.total_page);
         } else {
           setOrphanages([]);
         }
@@ -271,13 +271,25 @@ function ListOrphanages() {
           </Table>
         </CardBody>
         <CardFooter className="p-4 border-t">
-          <Pagination
-            showControls
-            total={Math.ceil(totalItems / itemsPerPage) || 0}
-            initialPage={1}
-            onChange={page => setCurrentPage(page)}
-            className="mt-4"
-          />
+          <div className="flex justify-between items-center mt-6">
+            <Button
+              color="gray"
+              onClick={() => setCurrentPage(currentPage > 0 ? currentPage - 1 : 0)}
+              disabled={currentPage === 0}
+              className="transition-colors hover:bg-gray-200"
+            >
+              &larr; Previous
+            </Button>
+            <p className="text-gray-600">Page {currentPage + 1} of {totalItems / itemsPerPage}</p>
+            <Button
+              color="gray"
+              onClick={() => setCurrentPage(currentPage < totalItems / itemsPerPage - 1 ? currentPage + 1 : currentPage)}
+              disabled={currentPage === totalItems / itemsPerPage - 1}
+              className="transition-colors hover:bg-gray-200"
+            >
+              Next &rarr;
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>
