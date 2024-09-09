@@ -145,7 +145,7 @@ function ProfileOrphanage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-[#E0F7FA]">
       <SideBar />
       <div className="flex-grow p-8 flex flex-col items-center">
         <Card className="shadow-lg rounded-lg bg-white p-8 w-full max-w-4xl">

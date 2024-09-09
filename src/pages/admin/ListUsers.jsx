@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../lib/axiosInstance";
-import { Table, Button, TextInput, Select } from "flowbite-react";
+import { Table, Button} from "flowbite-react";
 import {
   Card,
   CardBody,
@@ -71,10 +71,10 @@ function ListUsers() {
     <>
       <div className="flex h-screen bg-gray-100">
         <SideBarAdmin />
-        <div className="flex-grow flex-wrap p-4">
+        <div className="flex-grow flex-wrap p-4 bg-[#E0F7FA]">
           <Card className="mb-6 bg-white shadow-lg rounded-lg">
             <CardHeader className="border-b p-4">
-              <h1 className="text-2xl font-bold text-gray-800">List Donors</h1>
+              <h1 className="text-xl font-bold text-gray-800">List Donors</h1>
             </CardHeader>
             <CardBody className="p-6">
               <Table className="mb-6 w-full">

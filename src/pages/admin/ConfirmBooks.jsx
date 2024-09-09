@@ -133,7 +133,7 @@ function ConfirmBooks() {
   <SideBarAdmin className="md:w-1/4" />
   <div className="md:ml-6 w-full md:w-3/4 p-4">
     <Card className="shadow-lg rounded-lg">
-      <CardHeader className="bg-gray-100 border-b text-lg font-semibold p-4">
+      <CardHeader className="bg-gray-100 border-b text-xl font-semibold p-4">
         Confirmation Book
       </CardHeader>
       <CardBody className="p-6">

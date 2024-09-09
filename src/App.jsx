@@ -13,7 +13,6 @@ import AboutPages from "./pages/aboutPages";
 import RequestBook from "./pages/orphanage/RequestBook";
 import ConfirmBook from "./pages/orphanage/ConfirmBook";
 import ProfileOrphanage from "./pages/orphanage/ProfileOrphanage";
-import SugestOrphanagePage from "./pages/orphanage/SugestOrphanagePage";
 import CheckDonation from "./pages/donor/CheckDonation";
 import ListUsers from "./pages/admin/ListUsers";
 import ListOrphanages from "./pages/admin/ListOrphanages";
@@ -93,11 +92,6 @@ function App() {
         <Route path="/orphanage-profile" element={
           <PrivateRoute roles={['ROLE_ORPHANAGES']}>
             <ProfileOrphanage />
-          </PrivateRoute>
-        } />
-        <Route path="/orphanage-sugest" element={
-          <PrivateRoute roles={['ROLE_ORPHANAGES']}>
-            <SugestOrphanagePage />
           </PrivateRoute>
         } />
         <Route path="/history-donation-orphanage" element={

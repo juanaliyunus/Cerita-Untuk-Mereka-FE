@@ -16,9 +16,9 @@ function ListOrphanages() {
   const [totalItems, setTotalItems] = useState(0);
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
-  const [reload, setReload] = useState(false); // Tambahkan state untuk reload
+  const [reload, setReload] = useState(false); 
   const itemsPerPage = 15;
-  const [sortOrder, setSortOrder] = useState("asc"); // Tambahkan state untuk urutan sortir
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     const token =
@@ -38,7 +38,7 @@ function ListOrphanages() {
           setOrphanages([]);
         }
       });
-  }, [currentPage, reload]); // Tambahkan reload sebagai dependency
+  }, [currentPage, reload]); 
 
   const handleDelete = id => {
     const token =
@@ -137,10 +137,10 @@ function ListOrphanages() {
 <>
   <div className="flex h-screen bg-gray-100">
     <SideBarAdmin />
-    <div className="flex-grow flex-wrap p-6">
+    <div className="flex-grow flex-wrap p-6 bg-[#E0F7FA] ">
       <Card className="mb-8 bg-white shadow-lg rounded-lg">
         <CardHeader className="border-b p-4">
-          <h1 className="text-3xl font-semibold text-gray-800">List Orphanages</h1>
+          <h1 className="text-xl font-semibold text-gray-800">List Orphanages</h1>
         </CardHeader>
         <CardBody className="p-6">
           <Table className="mb-6 w-full">
