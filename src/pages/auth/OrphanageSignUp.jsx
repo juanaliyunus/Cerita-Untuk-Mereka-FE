@@ -126,7 +126,7 @@ const OrphanageSignUp = () => {
     validateField(
       "orphanages.web_url",
       [
-        { test: url && !/\./.test(url) && !/-/.test(url), message: "URL harus mengandung .com, .id, atau . lainnya, atau -" },
+        { test: url && !/\./.test(url), message: "URL harus mengandung .com, .id, atau . lainnya" },
         { test: /\s/.test(url), message: "URL tidak boleh mengandung spasi" },
       ],
       setError,
@@ -286,7 +286,7 @@ const OrphanageSignUp = () => {
           {renderTextarea("orphanages.description", "Deskripsi")}
           {renderInput(
             "orphanages.web_url",
-            "URL Website (isi dengan - jika tidak ada)",
+            "URL Website (Kosongi jika tidak ada)",
             "url"
           )}
         </div>

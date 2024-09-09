@@ -69,6 +69,13 @@ const ProfileOrphanage = () => {
       formData.append("avatar", renamedFile);
       setAvatarFileName(fileName);
 
+      // Display the selected avatar immediately
+      const reader = new FileReader();
+      reader.onload = () => {
+        setAvatar(reader.result);
+      };
+      reader.readAsDataURL(file);
+
       const token = sessionStorage.getItem("token") || localStorage.getItem("token");
       if (!token) {
         console.error("No token found");

@@ -22,7 +22,7 @@ const signupFormSchema = z.object({
     .string()
     .min(3)
     .max(20)
-    .regex(/^[^\s\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/, {
+    .regex(/^[^\s!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/, {
       message: "Username tidak valid",
     }),
   password: z
@@ -57,6 +57,10 @@ const DonaturSignUp = () => {
   });
 
   const password = watch("password");
+  const email = watch("donor.email");
+  const username = watch("username");
+  const full_name = watch("donor.full_name");
+  const phone_number = watch("donor.phone_number");
 
   useEffect(() => {
     if (password) {
@@ -82,6 +86,80 @@ const DonaturSignUp = () => {
       }
     }
   }, [password, setError, clearErrors]);
+
+  useEffect(() => {
+    if(email){
+      const emailErrors = [];
+      if(!email.includes("@")){
+        emailErrors.push("Email tidak valid")
+      }
+      if(email.includes(" ")){
+        emailErrors.push("Email tidak boleh mengandung spasi")
+      }
+      if(emailErrors.length){
+        setError("donor.email", {
+          type: "manual",
+          message: emailErrors.join(", "),
+        });
+      }else{
+        clearErrors("donor.email")
+      }
+    }
+  },[email,setError,clearErrors])
+
+  useEffect(() => {
+    if(username){
+      const usernameErrors = [];
+      if(username.includes(" ")){
+        usernameErrors.push("Username tidak boleh mengandung spasi")
+      }
+      if(usernameErrors.length){
+        setError("username", {
+          type: "manual",
+          message: usernameErrors.join(", "),
+        });
+      }else{
+        clearErrors("username")
+      }
+    }
+  },[username,setError,clearErrors])
+
+  useEffect(() => {
+    if(full_name){
+      const full_nameErrors = [];
+      if(full_name.length < 3){
+        full_nameErrors.push("Nama lengkap harus mengandung minimal 3 huruf")
+      }
+      if(full_nameErrors.length){
+        setError("donor.full_name", {
+          type: "manual",
+          message: full_nameErrors.join(", "),
+        });
+      }else{
+        clearErrors("donor.full_name")
+      }
+    }
+  },[full_name,setError,clearErrors])
+
+  useEffect(() => {
+    if(phone_number){
+      const phone_numberErrors = [];
+      if(!phone_number.startsWith("0")){
+        phone_numberErrors.push("Nomor telepon harus diawali dengan 0")
+      }
+      if(phone_number.length < 10 || phone_number.length > 13){
+        phone_numberErrors.push("Nomor telepon harus mengandung 10-13 digit")
+      }
+      if(phone_numberErrors.length){
+        setError("donor.phone_number", {
+          type: "manual",
+          message: phone_numberErrors.join(", "),
+        });
+      }else{
+        clearErrors("donor.phone_number")
+      }
+    }
+  },[phone_number,setError,clearErrors])
 
   const onSubmit = async (data) => {
     try {

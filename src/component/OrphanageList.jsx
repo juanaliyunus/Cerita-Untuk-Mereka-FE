@@ -26,6 +26,7 @@ function OrphanageList() {
     bookName: "",
     quantityDonated: 0,
   });
+  const [bookNeeds, setBookNeeds] = useState([]);
 
   const navigate = useNavigate();
 
@@ -122,16 +123,38 @@ function OrphanageList() {
     }
   };
 
-  const updateDonationDetails = (key, value) => {
+  const updateDonationNeed = async (value) => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await axiosInstance.get(
+        `/orphanages/needs/by/${value}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      console.log(response.data.data)
+      setBookNeeds(response.data.data)
+    } catch (error) {
+      console.error("Error fetching books for orphanage:", error);
+    }
+  }
+
+  const updateDonationDetails =async (key, value) => {
     setDonationDetails((prev) => ({ ...prev, [key]: value }));
   };
 
-  const bookNeeds = [
-    { name: "Mathematics for Beginners", quantity: 5 },
-    { name: "Introduction to Science", quantity: 3 },
-    { name: "Basic English Grammar", quantity: 7 },
-    // Tambahkan lebih banyak buku sesuai kebutuhan
-  ];
+  // const bookNeeds = [
+  //   { name: "Mathematics for Beginners", quantity: 5 },
+  //   { name: "Introduction to Science", quantity: 3 },
+  //   { name: "Basic English Grammar", quantity: 7 },
+  //   // Tambahkan lebih banyak buku sesuai kebutuhan
+  // ];
   
 
   return (
@@ -206,6 +229,7 @@ function OrphanageList() {
                   className="bg-pink-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-pink-600 transition-colors duration-300 flex items-center"
                   onClick={() => {
                     updateDonationDetails("orphanageId", orphanage.id);
+                    updateDonationNeed(orphanage.id);
                     setIsModalDonate(true);
                   }}
                 >
@@ -289,7 +313,7 @@ function OrphanageList() {
           {bookNeeds.length > 0 ? (
             bookNeeds.map((book, index) => (
               <li key={index} className="text-lg text-gray-700">
-                <span className="font-medium">{book.name}</span>
+                <span className="font-medium">{book.book_name}</span>
                 <span className="text-gray-500"> - Needed: {book.quantity}</span>
               </li>
             ))
