@@ -24,7 +24,7 @@ const Profile = () => {
   const [address, setAddress] = useState("");
   const [isAvatarChanged, setIsAvatarChanged] = useState(false);
   const [avatarFileName, setAvatarFileName] = useState("");
-  
+  const [imagePreview, setImagePreview] = useState(null);
 
   console.log("fulname =>"+fullname);
   
@@ -53,6 +53,7 @@ const Profile = () => {
       console.log("Full response data =>", response.data);
       const profileData = response.data.data;
       console.log("Profile data:", profileData);
+      console.log(profileData.avatar)
       setAvatar(profileData.avatar);
       setFullname(profileData.fullname);
       setEmail(profileData.email);
@@ -75,7 +76,7 @@ const Profile = () => {
     fetchData();
   }, []);
 
-  const handleAvatarChange = async event => {
+  const handleAvatarChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       setIsAvatarChanged(true);
@@ -85,31 +86,25 @@ const Profile = () => {
       formData.append("avatar", renamedFile);
       setAvatarFileName(fileName);
 
-      const url = "/avatars";
-      console.log("Uploading avatar to URL:", url);
-      console.log("avatar:", fileName);
-
-      const token =
-        sessionStorage.getItem("token") || localStorage.getItem("token");
+      const token = sessionStorage.getItem("token") || localStorage.getItem("token");
       if (!token) {
         console.error("No token found");
         return;
       }
 
       try {
-        const response = await axiosInstance.post(url, formData, {
+        const response = await axiosInstance.post("/avatars", formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log("Success upload avatar:", response.data);
+
+
         setAvatar(response.data.data.avatar);
+        setImagePreview(URL.createObjectURL(file)); // Tampilkan pratinjau gambar
       } catch (error) {
-        console.error("Failed to upload avatar:", error);
-        if (error.response) {
-          console.error("Error response data:", error.response.data);
-        }
+        console.error("Failed to upload avatar:", error.response?.data || "Network error or server is down");
       }
     }
   };
@@ -173,20 +168,23 @@ const Profile = () => {
             <div className="flex flex-col items-center mb-6">
               <Image
                 src={
-                  avatar
+                  imagePreview
+                    ? imagePreview
+                    : avatar
                     ? `http://10.10.102.142:8080/api/v1/avatars/public/${avatar}`
                     : "path/to/default/avatar.png"
                 }
                 alt="Avatar"
                 className="w-32 h-32 rounded-full border-4 border-blue-500"
               />
-              <input
-                type="file"
-                name="avatar"
-                onChange={handleAvatarChange}
-                className="mt-4"
-                disabled={!isEditing}
-              />
+              {isEditing && (
+                <input
+                  type="file"
+                  name="avatar"
+                  onChange={handleAvatarChange}
+                  className="mt-4"
+                />
+              )}
             </div>
             <form className="space-y-4" encType="multipart/form-data">
               {[
